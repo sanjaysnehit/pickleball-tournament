@@ -1,0 +1,2782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frank Rui & Ron C Excellent Adventure</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 26px;
+        }
+        
+        .teams-setup {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .pool-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+        }
+        
+        .pool-card.pool-b {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .pool-card.pool-c {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .pool-card h3 {
+            margin: 0 0 15px 0;
+            text-align: center;
+        }
+        
+        .team-input {
+            background: white;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            color: #333;
+        }
+        
+        .team-input label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+        
+        .team-input input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .team-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .start-btn {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .start-btn:disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            background: #ccc !important;
+            pointer-events: none !important;
+        }
+        
+        .start-btn:not(:disabled) {
+            opacity: 1 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+        
+        .start-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .round-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .round-header {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .time-slot {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .time-title {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .courts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        .court-card {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            border-radius: 10px;
+            padding: 12px;
+        }
+        
+        .court-title {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .match-box {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        
+        .team-display {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 8px 0;
+        }
+        
+        .team-display.winner {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .team-name {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .players {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .vs {
+            text-align: center;
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 8px 0;
+        }
+        
+        .score-entry {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+            margin-top: 12px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .score-input {
+            width: 60px;
+            height: 50px;
+            border: 3px solid #667eea;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .score-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+        
+        .submit-score {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .submit-score:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .standings {
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .standings h2 {
+            margin: 0 0 15px 0;
+            color: #27ae60;
+            text-align: center;
+        }
+        
+        .standings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .place-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .place-card.first { border-left: 5px solid #f1c40f; }
+        .place-card.second { border-left: 5px solid #95a5a6; }
+        .place-card.third { border-left: 5px solid #e67e22; }
+        
+        .place-number {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .place-team {
+            color: #667eea;
+            font-size: 14px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .flow-info {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        
+        .player-selection {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        .player-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .player-checkbox input {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .player-checkbox label {
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 10px 5px;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .generate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .selection-info {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .edit-score-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .edit-score-btn:hover {
+            background: #f57c00;
+        }
+        
+        .pool-complete-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .pool-complete-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .pool-complete-header {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+        
+        .pool-rankings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .pool-rank-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .pool-rank-section h3 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .rank-item {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            font-size: 14px;
+        }
+        
+        .rank-item:first-of-type {
+            border-left-color: #f1c40f;
+            font-weight: bold;
+        }
+        
+        .pool-results-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .pool-results-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .match-result {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .match-result.winner-a1 {
+            border-left-color: #27ae60;
+        }
+        
+        .match-result.winner-a2 {
+            border-left-color: #3498db;
+        }
+        
+        .match-teams {
+            flex: 1;
+        }
+        
+        .match-score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 0 20px;
+        }
+        
+        .match-winner {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .results-in-popup {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .match-result-compact {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        
+        .continue-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .courts-grid {
+                grid-template-columns: 1fr;
+            }
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+            .pool-rankings {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏓 Frank Rui & Ron C Excellent Adventure 🏓</h1>
+            <p>Doubles Tournament • 3 Courts • 7:00-9:00 AM</p>
+        </div>
+        
+        <!-- Player Count Selection Phase -->
+        <div id="player-count-phase">
+            <h2>🎾 Tournament Setup</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">
+                How many players are enrolled in the tournament?<br>
+                <strong style="color: #667eea;">Supports 6-10 teams (12-20 players)</strong>
+            </p>
+            
+            <div style="max-width: 400px; margin: 0 auto;">
+                <label style="display: block; font-weight: bold; margin-bottom: 10px; color: #667eea;">
+                    Number of Players (12-20, even numbers only):
+                </label>
+                <select id="player-count" onchange="updateTournamentInfo()" style="width: 100%; padding: 12px; font-size: 16px; border: 2px solid #667eea; border-radius: 8px; margin-bottom: 10px; -webkit-appearance: menulist; appearance: menulist;">
+                    <option value="">-- Select Number of Players --</option>
+                    <option value="12">12 Players (6 Teams)</option>
+                    <option value="14">14 Players (7 Teams)</option>
+                    <option value="16">16 Players (8 Teams)</option>
+                    <option value="18">18 Players (9 Teams)</option>
+                    <option value="20">20 Players (10 Teams)</option>
+                </select>
+                
+                <button class="start-btn" id="proceed-btn" onclick="proceedToPlayerSelection()" style="width: 100%; margin-top: 20px;" disabled>
+                    ➡️ Continue to Player Selection
+                </button>
+            </div>
+            
+            <div id="tournament-info" style="margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 10px; display: none;">
+                <h3 style="margin-top: 0; color: #667eea;">📋 Tournament Format</h3>
+                <div id="format-details"></div>
+            </div>
+        </div>
+        
+        <!-- Setup Phase -->
+        <div id="setup-phase" class="hidden">
+            <!-- Player Selection -->
+            <div class="player-selection">
+                <h2 style="text-align: center; color: #667eea;">🎯 Select 16 Players from Your Club</h2>
+                <div class="selection-info" id="selection-count">Selected: 0 / 16</div>
+                <div class="players-grid" id="players-list"></div>
+                <div style="text-align: center;">
+                    <button class="generate-btn" onclick="selectAll()">✓ Select All</button>
+                    <button class="generate-btn" onclick="clearAll()">✗ Clear All</button>
+                    <button class="generate-btn" id="generate-teams-btn" onclick="generateRandomTeams()" disabled>🎲 Generate Random Teams</button>
+                </div>
+            </div>
+            
+            <h2 style="text-align: center; color: #667eea; margin-top: 30px;">👥 Generated Teams</h2>
+            <div class="teams-setup" id="teams-display">
+                <div class="pool-card">
+                    <h3>🔴 POOL A</h3>
+                    <div class="team-input">
+                        <label>Team A1</label>
+                        <input type="text" id="a1p1" placeholder="Player 1 Name">
+                        <input type="text" id="a1p2" placeholder="Player 2 Name">
+                    </div>
+                    <div class="team-input">
+                        <label>Team A2</label>
+                        <input type="text" id="a2p1" placeholder="Player 1 Name">
+                        <input type="text" id="a2p2" placeholder="Player 2 Name">
+                    </div>
+                    <div class="team-input">
+                        <label>Team A3</label>
+                        <input type="text" id="a3p1" placeholder="Player 1 Name">
+                        <input type="text" id="a3p2" placeholder="Player 2 Name">
+                    </div>
+                    <div class="team-input">
+                        <label>Team A4</label>
+                        <input type="text" id="a4p1" placeholder="Player 1 Name">
+                        <input type="text" id="a4p2" placeholder="Player 2 Name">
+                    </div>
+                </div>
+                
+                <div class="pool-card pool-b">
+                    <h3>🔵 POOL B</h3>
+                    <div class="team-input">
+                        <label>Team B1</label>
+                        <input type="text" id="b1p1" placeholder="Player 1 Name">
+                        <input type="text" id="b1p2" placeholder="Player 2 Name">
+                    </div>
+                    <div class="team-input">
+                        <label>Team B2</label>
+                        <input type="text" id="b2p1" placeholder="Player 1 Name">
+                        <input type="text" id="b2p2" placeholder="Player 2 Name">
+                    </div>
+                    <div class="team-input">
+                        <label>Team B3</label>
+                        <input type="text" id="b3p1" placeholder="Player 1 Name">
+                        <input type="text" id="b3p2" placeholder="Player 2 Name">
+                    </div>
+                    <div class="team-input">
+                        <label>Team B4</label>
+                        <input type="text" id="b4p1" placeholder="Player 1 Name">
+                        <input type="text" id="b4p2" placeholder="Player 2 Name">
+                    </div>
+                </div>
+            </div>
+            
+            <button class="start-btn" onclick="startTournament()">🚀 START TOURNAMENT</button>
+        </div>
+        
+        <!-- Tournament Phase -->
+        <div id="tournament-phase" class="hidden">
+            <div id="tournament-content"></div>
+            
+            <div class="standings">
+                <h2>🏆 FINAL STANDINGS</h2>
+                <div class="standings-grid" id="final-standings"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let teams = {};
+        let matches = [];
+        let poolStandings = { A: {}, B: {} };
+        let finalPlacements = {};
+        let completedMatches = new Set();
+        let advancementCompleted = new Set(); // Track which advancements have been processed
+        let poolPlayEnded = false; // Flag to prevent playoff matches from updating pool standings
+        let matchTeamData = {};  // Store team IDs for each match
+        let poolPlayResults = [];  // Store all pool play match results
+        
+        // Club members list (36 players) - Alphabetically sorted
+        const clubMembers = [
+            'Adrian', 'AH', 'Ali', 'Amish', 'Brendon', 'Chris',
+            'Chuck', 'Clyde', 'Danny', 'Derek', 'Dr. Raymond Lee', 'Faiz',
+            'Fardeen', 'Felipe', 'Frank', 'Freddy', 'Jacob', 'JJ',
+            'Kevin', 'Mario', 'Matthew', 'Nikhil', 'Owais', 'Rahul',
+            'Rahul D', 'Ratish', 'Rob', 'Ron C', 'Ron G', 'Rui',
+            'Ryan', 'Sanjay', 'Shams', 'Shayne', 'Steve', 'Zuman'
+        ];
+        
+        let selectedPlayers = [];
+        
+        let tournamentStarted = false;
+        let numPlayers = 0;
+        let numTeams = 0;
+        
+        // Initialize player selection on page load
+        window.onload = function() {
+            console.log('Page loaded, initializing...');
+            
+            // Start with player count selection
+            document.getElementById('player-count-phase').classList.remove('hidden');
+            
+            // Set initial button state
+            updateTournamentInfo();
+            
+            // Add change event listener for player count dropdown
+            const playerCountSelect = document.getElementById('player-count');
+            if (playerCountSelect) {
+                console.log('Player count select found, adding listeners');
+                // Add multiple event types for better mobile compatibility
+                playerCountSelect.addEventListener('change', function() {
+                    console.log('Change event fired');
+                    updateTournamentInfo();
+                });
+                playerCountSelect.addEventListener('input', function() {
+                    console.log('Input event fired');
+                    updateTournamentInfo();
+                });
+                // Also trigger on iOS-specific events
+                playerCountSelect.addEventListener('blur', function() {
+                    console.log('Blur event fired');
+                    updateTournamentInfo();
+                });
+            } else {
+                console.error('Player count select NOT found!');
+            }
+            
+            // Add mobile-friendly event listener for proceed button
+            const proceedBtn = document.getElementById('proceed-btn');
+            if (proceedBtn) {
+                console.log('Proceed button found, adding listeners');
+                // Remove inline onclick and add proper event listeners
+                proceedBtn.addEventListener('click', function(e) {
+                    console.log('Click event on button');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!this.disabled) {
+                        console.log('Button not disabled, proceeding');
+                        proceedToPlayerSelection();
+                    } else {
+                        console.log('Button is disabled, cannot proceed');
+                    }
+                });
+                // Add touchend for better iOS support
+                proceedBtn.addEventListener('touchend', function(e) {
+                    console.log('Touchend event on button');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!this.disabled) {
+                        console.log('Button not disabled, proceeding via touch');
+                        proceedToPlayerSelection();
+                    } else {
+                        console.log('Button is disabled, cannot proceed via touch');
+                    }
+                }, {passive: false});
+            } else {
+                console.error('Proceed button NOT found!');
+            }
+        };
+        
+        function updateTournamentInfo() {
+            const selectEl = document.getElementById('player-count');
+            const count = parseInt(selectEl ? selectEl.value : '');
+            const info = document.getElementById('tournament-info');
+            const proceedBtn = document.getElementById('proceed-btn');
+            
+            if (!proceedBtn) {
+                console.error('Proceed button not found!');
+                return;
+            }
+            
+            if (count && count >= 12 && count <= 20 && count % 2 === 0) {
+                numPlayers = count;
+                numTeams = count / 2;
+                
+                let formatHtml = `<p><strong>👥 Players:</strong> ${count}</p>`;
+                formatHtml += `<p><strong>🏆 Teams:</strong> ${numTeams} doubles teams</p>`;
+                formatHtml += `<p><strong>🏟️ Courts:</strong> 3 courts</p>`;
+                formatHtml += `<p><strong>⏱️ Duration:</strong> FULL 2 hours (8 time slots × 15 minutes)</p>`;
+                formatHtml += `<p><strong>📊 Format:</strong> Pool play + Playoffs + Placement brackets</p>`;
+                formatHtml += `<p style="color: #27ae60;">✓ All courts utilized across 8 time slots (2 hours)</p>`;
+                
+                document.getElementById('format-details').innerHTML = formatHtml;
+                if (info) info.style.display = 'block';
+                
+                // Enable button
+                proceedBtn.disabled = false;
+                proceedBtn.removeAttribute('disabled');
+                proceedBtn.classList.remove('disabled');
+                proceedBtn.style.pointerEvents = 'auto';
+                proceedBtn.style.opacity = '1';
+                proceedBtn.style.background = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+                proceedBtn.style.cursor = 'pointer';
+            } else {
+                if (info) info.style.display = 'none';
+                
+                // Disable button
+                proceedBtn.disabled = true;
+                proceedBtn.setAttribute('disabled', 'disabled');
+                proceedBtn.style.pointerEvents = 'none';
+            }
+        }
+        
+        function proceedToPlayerSelection() {
+            console.log('=== proceedToPlayerSelection called ===');
+            
+            const proceedBtn = document.getElementById('proceed-btn');
+            if (proceedBtn && proceedBtn.disabled) {
+                console.log('Button is disabled, rejecting click');
+                alert('Please select the number of players first!');
+                return false;
+            }
+            
+            const count = parseInt(document.getElementById('player-count').value);
+            console.log('Selected count:', count);
+            
+            if (!count || count < 12 || count > 20 || count % 2 !== 0) {
+                alert('Please select a valid number of players (12-20, even numbers only)!');
+                return false;
+            }
+            
+            // Update global variables
+            numPlayers = count;
+            numTeams = count / 2;
+            console.log('Set numPlayers:', numPlayers, 'numTeams:', numTeams);
+            
+            // Hide player count phase
+            const playerCountPhase = document.getElementById('player-count-phase');
+            console.log('player-count-phase element:', playerCountPhase);
+            playerCountPhase.classList.add('hidden');
+            console.log('Added hidden class to player-count-phase');
+            
+            // Show setup phase with player selection
+            const setupPhase = document.getElementById('setup-phase');
+            console.log('setup-phase element:', setupPhase);
+            setupPhase.classList.remove('hidden');
+            console.log('Removed hidden class from setup-phase');
+            
+            // Initialize player selection with the chosen count
+            console.log('About to call initializePlayerSelection');
+            initializePlayerSelection();
+            console.log('initializePlayerSelection completed');
+        }
+        
+        function initializePlayerSelection() {
+            const setupPhase = document.getElementById('setup-phase');
+            
+            setupPhase.innerHTML = `
+                <h2>👥 Select Players for Tournament</h2>
+                <p style="text-align: center; color: #666;">Select ${numPlayers} players from the club roster.</p>
+                
+                <div id="selection-count" style="text-align: center; font-size: 18px; font-weight: bold; margin: 15px 0; color: #666;">
+                    Selected: 0 / ${numPlayers}
+                </div>
+                
+                <div class="players-grid" id="players-list"></div>
+                
+                <button class="start-btn" id="generate-teams-btn" onclick="generateRandomTeams()" disabled style="margin: 20px auto; display: block; max-width: 400px;">
+                    🎲 Generate Random Teams
+                </button>
+                
+                <h2 id="teams-display" style="margin-top: 40px;">🏆 TEAM ASSIGNMENTS</h2>
+                <p style="text-align: center; color: #666;">Review and adjust team pairings below</p>
+                
+                <div class="teams-setup" id="teams-container"></div>
+                
+                <button class="start-btn" onclick="startTournament()">🚀 START TOURNAMENT</button>
+            `;
+            
+            // Populate player checkboxes
+            const playersList = document.getElementById('players-list');
+            playersList.innerHTML = clubMembers.map((name, idx) => `
+                <div class="player-checkbox">
+                    <input type="checkbox" id="player${idx}" value="${name}" onchange="updateSelection()">
+                    <label for="player${idx}">${name}</label>
+                </div>
+            `).join('');
+            
+            // Generate team input fields
+            generateTeamInputs();
+        }
+        
+        // Prevent accidental refresh/close when tournament is in progress
+        window.addEventListener('beforeunload', function(e) {
+            // Only show warning if tournament has started
+            if (tournamentStarted) {
+                const message = 'Tournament in progress! All results will be lost if you leave. Are you sure?';
+                e.preventDefault();
+                e.returnValue = message;
+                return message;
+            }
+        });
+        
+        function generateTeamInputs() {
+            const container = document.getElementById('teams-container');
+            
+            let html = '';
+            
+            // Special case: 9 teams = 3 pools of 3
+            if (numTeams === 9) {
+                // Pool A
+                html += '<div class="pool-card"><h3>🔴 POOL A</h3>';
+                for (let i = 1; i <= 3; i++) {
+                    html += `
+                        <div class="team-input">
+                            <label>Team A${i}</label>
+                            <input type="text" id="a${i}p1" placeholder="Player 1 Name">
+                            <input type="text" id="a${i}p2" placeholder="Player 2 Name">
+                        </div>
+                    `;
+                }
+                html += '</div>';
+                
+                // Pool B
+                html += '<div class="pool-card pool-b"><h3>🔵 POOL B</h3>';
+                for (let i = 1; i <= 3; i++) {
+                    html += `
+                        <div class="team-input">
+                            <label>Team B${i}</label>
+                            <input type="text" id="b${i}p1" placeholder="Player 1 Name">
+                            <input type="text" id="b${i}p2" placeholder="Player 2 Name">
+                        </div>
+                    `;
+                }
+                html += '</div>';
+                
+                // Pool C
+                html += '<div class="pool-card pool-c"><h3>🟢 POOL C</h3>';
+                for (let i = 1; i <= 3; i++) {
+                    html += `
+                        <div class="team-input">
+                            <label>Team C${i}</label>
+                            <input type="text" id="c${i}p1" placeholder="Player 1 Name">
+                            <input type="text" id="c${i}p2" placeholder="Player 2 Name">
+                        </div>
+                    `;
+                }
+                html += '</div>';
+            } else {
+                // Normal 2-pool distribution for other team counts
+                const teamsPerPool = Math.ceil(numTeams / 2);
+                const poolATeams = Math.min(teamsPerPool, numTeams);
+                const poolBTeams = numTeams - poolATeams;
+                
+                // Pool A
+                if (poolATeams > 0) {
+                    html += '<div class="pool-card"><h3>🔴 POOL A</h3>';
+                    for (let i = 1; i <= poolATeams; i++) {
+                        html += `
+                            <div class="team-input">
+                                <label>Team A${i}</label>
+                                <input type="text" id="a${i}p1" placeholder="Player 1 Name">
+                                <input type="text" id="a${i}p2" placeholder="Player 2 Name">
+                            </div>
+                        `;
+                    }
+                    html += '</div>';
+                }
+                
+                // Pool B
+                if (poolBTeams > 0) {
+                    html += '<div class="pool-card pool-b"><h3>🔵 POOL B</h3>';
+                    for (let i = 1; i <= poolBTeams; i++) {
+                        html += `
+                            <div class="team-input">
+                                <label>Team B${i}</label>
+                                <input type="text" id="b${i}p1" placeholder="Player 1 Name">
+                                <input type="text" id="b${i}p2" placeholder="Player 2 Name">
+                            </div>
+                        `;
+                    }
+                    html += '</div>';
+                }
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function updateSelection() {
+            selectedPlayers = Array.from(document.querySelectorAll('#players-list input:checked'))
+                .map(cb => cb.value);
+            
+            document.getElementById('selection-count').textContent = `Selected: ${selectedPlayers.length} / ${numPlayers}`;
+            
+            const generateBtn = document.getElementById('generate-teams-btn');
+            
+            if (selectedPlayers.length === numPlayers) {
+                document.getElementById('selection-count').style.color = '#27ae60';
+                generateBtn.disabled = false;
+                generateBtn.textContent = '🎲 Generate Random Teams';
+            } else if (selectedPlayers.length >= 12 && selectedPlayers.length % 2 === 0 && selectedPlayers.length <= 20) {
+                document.getElementById('selection-count').style.color = '#ff9800';
+                generateBtn.disabled = false;
+                generateBtn.textContent = `🎲 Generate Teams (${selectedPlayers.length} players)`;
+            } else {
+                document.getElementById('selection-count').style.color = '#e74c3c';
+                generateBtn.disabled = true;
+                generateBtn.textContent = '🎲 Generate Random Teams (select 12-20 players)';
+            }
+        }
+        
+        function selectAll() {
+            const checkboxes = document.querySelectorAll('#players-list input');
+            checkboxes.forEach((cb, idx) => {
+                cb.checked = idx < 16;
+            });
+            updateSelection();
+        }
+        
+        function clearAll() {
+            document.querySelectorAll('#players-list input').forEach(cb => cb.checked = false);
+            updateSelection();
+        }
+        
+        function generateRandomTeams() {
+            if (selectedPlayers.length < 12 || selectedPlayers.length > 20 || selectedPlayers.length % 2 !== 0) {
+                alert('Please select 12-20 players (even number only)!');
+                return;
+            }
+            
+            // Shuffle selected players
+            const shuffled = [...selectedPlayers].sort(() => Math.random() - 0.5);
+            
+            // Clear all inputs first
+            for (let i = 1; i <= 10; i++) {
+                const aInput1 = document.getElementById(`a${i}p1`);
+                const aInput2 = document.getElementById(`a${i}p2`);
+                const bInput1 = document.getElementById(`b${i}p1`);
+                const bInput2 = document.getElementById(`b${i}p2`);
+                const cInput1 = document.getElementById(`c${i}p1`);
+                const cInput2 = document.getElementById(`c${i}p2`);
+                
+                if (aInput1) aInput1.value = '';
+                if (aInput2) aInput2.value = '';
+                if (bInput1) bInput1.value = '';
+                if (bInput2) bInput2.value = '';
+                if (cInput1) cInput1.value = '';
+                if (cInput2) cInput2.value = '';
+            }
+            
+            // Assign players to teams
+            const actualTeams = Math.floor(shuffled.length / 2);
+            let playerIdx = 0;
+            
+            // Special case: 9 teams = 3 pools of 3
+            if (actualTeams === 9) {
+                // Assign Pool A (3 teams)
+                for (let i = 1; i <= 3 && playerIdx < shuffled.length; i++) {
+                    document.getElementById(`a${i}p1`).value = shuffled[playerIdx++];
+                    if (playerIdx < shuffled.length) {
+                        document.getElementById(`a${i}p2`).value = shuffled[playerIdx++];
+                    }
+                }
+                
+                // Assign Pool B (3 teams)
+                for (let i = 1; i <= 3 && playerIdx < shuffled.length; i++) {
+                    document.getElementById(`b${i}p1`).value = shuffled[playerIdx++];
+                    if (playerIdx < shuffled.length) {
+                        document.getElementById(`b${i}p2`).value = shuffled[playerIdx++];
+                    }
+                }
+                
+                // Assign Pool C (3 teams)
+                for (let i = 1; i <= 3 && playerIdx < shuffled.length; i++) {
+                    document.getElementById(`c${i}p1`).value = shuffled[playerIdx++];
+                    if (playerIdx < shuffled.length) {
+                        document.getElementById(`c${i}p2`).value = shuffled[playerIdx++];
+                    }
+                }
+            } else {
+                // Normal 2-pool distribution
+                const teamsPerPool = Math.ceil(actualTeams / 2);
+                
+                // Assign to Pool A
+                for (let i = 1; i <= Math.min(teamsPerPool, actualTeams) && playerIdx < shuffled.length; i++) {
+                    document.getElementById(`a${i}p1`).value = shuffled[playerIdx++];
+                    if (playerIdx < shuffled.length) {
+                        document.getElementById(`a${i}p2`).value = shuffled[playerIdx++];
+                    }
+                }
+                
+                // Assign to Pool B
+                for (let i = 1; i <= actualTeams - teamsPerPool && playerIdx < shuffled.length; i++) {
+                    document.getElementById(`b${i}p1`).value = shuffled[playerIdx++];
+                    if (playerIdx < shuffled.length) {
+                        document.getElementById(`b${i}p2`).value = shuffled[playerIdx++];
+                    }
+                }
+            }
+            
+            alert('✓ Teams generated randomly! Review the teams below and click START TOURNAMENT when ready.');
+            document.getElementById('teams-display').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function editScore(slot, court, team1Id, team2Id) {
+            const matchId = `s${slot}c${court}`;
+            
+            // Re-enable score inputs
+            document.getElementById(`${matchId}-s1`).disabled = false;
+            document.getElementById(`${matchId}-s2`).disabled = false;
+            document.getElementById(`${matchId}-s1`).value = '';
+            document.getElementById(`${matchId}-s2`).value = '';
+            
+            // Remove winner highlight
+            document.getElementById(`${matchId}-t1`).classList.remove('winner');
+            document.getElementById(`${matchId}-t2`).classList.remove('winner');
+            
+            // Reset submit button
+            const submitBtn = document.querySelector(`#slot${slot}court${court} .submit-score`);
+            submitBtn.disabled = false;
+            submitBtn.textContent = '✓ Submit Score';
+            
+            // Remove edit button
+            const editBtn = document.querySelector(`#slot${slot}court${court} .edit-score-btn`);
+            if (editBtn) editBtn.remove();
+            
+            // Calculate playoff structure to know which slot each round is in
+            const poolATeams = Object.keys(teams).filter(t => teams[t].pool === 'A');
+            const poolBTeams = Object.keys(teams).filter(t => teams[t].pool === 'B');
+            const poolCTeams = Object.keys(teams).filter(t => teams[t].pool === 'C');
+            let totalPoolMatches;
+            if (poolCTeams.length === 3) {
+                totalPoolMatches = 18; // 3-pool EXTENDED format: 9 intra-pool + 9 cross-pool = 6 slots
+            } else if (poolATeams.length === 4 && poolBTeams.length === 4) {
+                totalPoolMatches = 12;
+            } else if (poolATeams.length === 5 && poolBTeams.length === 4) {
+                totalPoolMatches = 12;
+            } else if (poolATeams.length === 5 && poolBTeams.length === 5) {
+                totalPoolMatches = 12;
+            } else {
+                totalPoolMatches = poolATeams.length * (poolATeams.length - 1) / 2 + 
+                                  poolBTeams.length * (poolBTeams.length - 1) / 2;
+            }
+            const poolPlaySlots = Math.ceil(totalPoolMatches / 3);
+            const semifinalSlot = poolPlaySlots + 1;
+            const thirdPlaceSlot = semifinalSlot + 1;
+            const championshipSlot = semifinalSlot + 2;
+            
+            // Remove from completed matches
+            completedMatches.delete(matchId);
+            
+            // Find the old match to reverse pool standings
+            const oldMatch = matches.find(m => m.slot === slot && m.court === court);
+            if (oldMatch && slot <= poolPlaySlots && !poolPlayEnded) {
+                // This was a pool play match - reverse the standings updates
+                // Handle cross-pool matches where teams may be from different pools
+                const oldWinner = oldMatch.winner;
+                const oldLoser = oldMatch.loser;
+                const oldWinnerScore = oldMatch.score1 > oldMatch.score2 ? oldMatch.score1 : oldMatch.score2;
+                const winnerPool = teams[oldWinner].pool;
+                const loserPool = teams[oldLoser].pool;
+                
+                if (poolStandings[winnerPool][oldWinner]) {
+                    poolStandings[winnerPool][oldWinner].wins--;
+                    poolStandings[winnerPool][oldWinner].points -= oldWinnerScore;
+                    console.log(`Reversed pool standings for ${oldWinner} (Pool ${winnerPool}): ${poolStandings[winnerPool][oldWinner].wins}W-${poolStandings[winnerPool][oldWinner].losses}L (${poolStandings[winnerPool][oldWinner].points} pts)`);
+                }
+                if (poolStandings[loserPool][oldLoser]) {
+                    poolStandings[loserPool][oldLoser].losses--;
+                    console.log(`Reversed pool standings for ${oldLoser} (Pool ${loserPool}): ${poolStandings[loserPool][oldLoser].wins}W-${poolStandings[loserPool][oldLoser].losses}L`);
+                }
+            }
+            
+            // Remove from matches array
+            matches = matches.filter(m => !(m.slot === slot && m.court === court));
+            
+            // Clear downstream matches that depend on this result
+            if (slot === semifinalSlot && court <= 1) {
+                // Semifinals edited - clear Championship, 3rd place, warmup, and all downstream matches
+                console.log('Semifinal edited - clearing 3rd place, warmup, championship, consolations, and victory matches');
+                updateMatch(thirdPlaceSlot, 0, null, null); // Clear 3rd place
+                updateMatch(thirdPlaceSlot, 2, null, null); // Clear warmup
+                updateMatch(championshipSlot, 0, null, null); // Clear championship
+                updateMatch(championshipSlot, 1, null, null); // Clear consolation (3rd loser vs 5th winner)
+                updateMatch(championshipSlot + 1, 0, null, null); // Clear victory celebration court 1
+                // Clear any matches that were populated from semifinals
+                matches = matches.filter(m => m.slot < thirdPlaceSlot || m.slot > championshipSlot + 1);
+                advancementCompleted.delete('semifinals'); // Allow re-advancement
+            }
+            if (slot === thirdPlaceSlot && court === 0) {
+                // 3rd place edited - clear standings and downstream matches
+                console.log('3rd place edited - clearing final placements and downstream matches');
+                finalPlacements[3] = null;
+                finalPlacements[4] = null;
+                updateFinalStandings();
+                updateMatch(championshipSlot, 1, null, null); // Clear consolation (3rd loser vs 5th winner)
+                updateMatch(championshipSlot + 1, 0, null, null); // Clear victory celebration court 1
+            }
+            if (slot === semifinalSlot && court === 2) {
+                // 5th place match edited - clear standings and downstream matches
+                console.log('5th place edited - clearing final placements and downstream matches');
+                finalPlacements[5] = null;
+                finalPlacements[6] = null;
+                updateFinalStandings();
+                updateMatch(championshipSlot, 1, null, null); // Clear consolation (3rd loser vs 5th winner)
+                updateMatch(championshipSlot, 2, null, null); // Clear consolation (5th loser vs 7th loser)
+                updateMatch(championshipSlot + 1, 1, null, null); // Clear victory celebration court 2
+            }
+            if (slot === thirdPlaceSlot && court === 1) {
+                // 7th place edited - clear standings and downstream matches
+                console.log('7th place edited - clearing final placements and downstream matches');
+                finalPlacements[7] = null;
+                finalPlacements[8] = null;
+                updateFinalStandings();
+                updateMatch(championshipSlot, 2, null, null); // Clear consolation (5th loser vs 7th loser)
+                updateMatch(championshipSlot + 1, 1, null, null); // Clear victory celebration court 2
+            }
+            if (slot === thirdPlaceSlot && court === 2) {
+                // 9th place edited - clear standings
+                console.log('9th place edited - clearing final placements');
+                finalPlacements[9] = null;
+                finalPlacements[10] = null;
+                updateFinalStandings();
+            }
+            if (slot === championshipSlot && court === 0) {
+                // Championship edited - clear standings and downstream matches
+                console.log('Championship edited - clearing final placements and downstream matches');
+                finalPlacements[1] = null;
+                finalPlacements[2] = null;
+                updateFinalStandings();
+                updateMatch(championshipSlot, 1, null, null); // Clear consolation
+                updateMatch(championshipSlot + 1, 0, null, null); // Clear victory celebration court 1
+            }
+            if (slot === championshipSlot && (court === 1 || court === 2)) {
+                // Consolation match edited - clear victory celebration matches
+                console.log('Consolation match edited - clearing victory celebration matches');
+                updateMatch(championshipSlot + 1, court === 1 ? 0 : 1, null, null);
+            }
+            
+            alert('Score reset! You can now enter the correct score.');
+        }
+        
+        function startTournament() {
+            // Collect team data dynamically
+            teams = {};
+            const actualTeamCount = document.querySelectorAll('input[id$="p1"]').length;
+            
+            // Special case: 9 teams = 3 pools
+            if (actualTeamCount === 9) {
+                poolStandings = { A: {}, B: {}, C: {} };
+            } else {
+                poolStandings = { A: {}, B: {} };
+            }
+            
+            advancementCompleted.clear(); // Reset advancement tracking
+            poolPlayEnded = false; // Reset pool play flag
+            
+            const teamsPerPool =Math.ceil(numTeams / 2);
+            const poolACount = Math.min(teamsPerPool, numTeams);
+            const poolBCount = numTeams - poolACount;
+            
+            // Collect Pool A teams
+            for (let i = 1; i <= 10; i++) {
+                const p1Input = document.getElementById(`a${i}p1`);
+                const p2Input = document.getElementById(`a${i}p2`);
+                
+                if (p1Input && p2Input && p1Input.value && p2Input.value) {
+                    const teamId = `A${i}`;
+                    teams[teamId] = {
+                        name: `Team A${i}`,
+                        p1: p1Input.value,
+                        p2: p2Input.value,
+                        pool: 'A'
+                    };
+                    poolStandings.A[teamId] = { wins: 0, losses: 0, points: 0 };
+                }
+            }
+            
+            // Collect Pool B teams
+            for (let i = 1; i <= 10; i++) {
+                const p1Input = document.getElementById(`b${i}p1`);
+                const p2Input = document.getElementById(`b${i}p2`);
+                
+                if (p1Input && p2Input && p1Input.value && p2Input.value) {
+                    const teamId = `B${i}`;
+                    teams[teamId] = {
+                        name: `Team B${i}`,
+                        p1: p1Input.value,
+                        p2: p2Input.value,
+                        pool: 'B'
+                    };
+                    poolStandings.B[teamId] = { wins: 0, losses: 0, points: 0 };
+                }
+            }
+            
+            // Collect Pool C teams (if 9 teams)
+            for (let i = 1; i <= 10; i++) {
+                const p1Input = document.getElementById(`c${i}p1`);
+                const p2Input = document.getElementById(`c${i}p2`);
+                
+                if (p1Input && p2Input && p1Input.value && p2Input.value) {
+                    const teamId = `C${i}`;
+                    teams[teamId] = {
+                        name: `Team C${i}`,
+                        p1: p1Input.value,
+                        p2: p2Input.value,
+                        pool: 'C'
+                    };
+                    poolStandings.C[teamId] = { wins: 0, losses: 0, points: 0 };
+                }
+            }
+            
+            // Validate that we have enough teams
+            const finalTeamCount = Object.keys(teams).length;
+            if (finalTeamCount < 6) {
+                alert('Please enter at least 6 complete teams (12 players) to start the tournament!');
+                return;
+            }
+            if (finalTeamCount > 10) {
+                alert('Maximum 10 teams (20 players) supported!');
+                return;
+            }
+            
+            // Mark tournament as started for refresh protection
+            tournamentStarted = true;
+            
+            document.getElementById('setup-phase').classList.add('hidden');
+            document.getElementById('tournament-phase').classList.remove('hidden');
+            
+            generateTournament();
+        }
+        
+        function generateTournament() {
+            const content = document.getElementById('tournament-content');
+            const actualTeamCount = Object.keys(teams).length;
+            
+            // Generate round-robin schedule for each pool
+            const poolATeams = Object.keys(teams).filter(t => teams[t].pool === 'A');
+            const poolBTeams = Object.keys(teams).filter(t => teams[t].pool === 'B');
+            const poolCTeams = Object.keys(teams).filter(t => teams[t].pool === 'C');
+            
+            // Special case: 9 teams with 3 pools of 3
+            if (actualTeamCount === 9 && poolCTeams.length === 3) {
+                // Round-robin within each pool (3 matches per pool = 9 total)
+                const poolAMatches = generateRoundRobin(poolATeams); // 3 matches
+                const poolBMatches = generateRoundRobin(poolBTeams); // 3 matches
+                const poolCMatches = generateRoundRobin(poolCTeams); // 3 matches
+                
+                // EXTENDED FORMAT: 18 matches across 6 slots (9 intra-pool + 9 cross-pool)
+                // Everyone plays exactly 4 matches for fair seeding
+                const poolPlaySchedule = distributeThreePoolMatches(poolAMatches, poolBMatches, poolCMatches);
+                
+                // Generate pool play HTML
+                let html = '<div class="round-section"><div class="round-header">🎾 EXTENDED POOL PLAY (7:00-8:30 AM)</div>';
+                
+                poolPlaySchedule.forEach((slot, idx) => {
+                    const slotNumber = idx + 1;
+                    const timeLabel = formatTimeSlot(slotNumber);
+                    html += generateTimeSlot(slotNumber, timeLabel, slot);
+                });
+                
+                html += '</div>';
+                html += '<div class="flow-info"><strong>📊 Extended Format:</strong> 6 slots pool play (everyone plays 4 matches) → 2 slots playoffs (compressed!).</div>';
+                
+                // Generate playoffs for 3-pool format
+                html += generateThreePoolPlayoffStructure(poolPlaySchedule.length);
+                
+                content.innerHTML = html;
+                return;
+            }
+            
+            // For 8-10 team tournaments, use MODIFIED pool play (2 matches per team)
+            let poolAMatches, poolBMatches;
+            if ((poolATeams.length === 4 && poolBTeams.length === 4) || 
+                (poolATeams.length === 5 && poolBTeams.length === 4) ||
+                (poolATeams.length === 5 && poolBTeams.length === 5)) {
+                // 8 teams: 3 matches per team to fill all courts
+                if (poolATeams.length === 4 && poolBTeams.length === 4) {
+                    poolAMatches = [
+                        [poolATeams[0], poolATeams[1]],
+                        [poolATeams[2], poolATeams[3]],
+                        [poolATeams[0], poolATeams[2]],
+                        [poolATeams[1], poolATeams[3]],
+                        [poolATeams[0], poolATeams[3]],
+                        [poolATeams[1], poolATeams[2]]
+                    ];
+                    poolBMatches = [
+                        [poolBTeams[0], poolBTeams[1]],
+                        [poolBTeams[2], poolBTeams[3]],
+                        [poolBTeams[0], poolBTeams[2]],
+                        [poolBTeams[1], poolBTeams[3]],
+                        [poolBTeams[0], poolBTeams[3]],
+                        [poolBTeams[1], poolBTeams[2]]
+                    ];
+                } else if (poolATeams.length === 5 && poolBTeams.length === 5) {
+                    // 10 teams: 6 matches per pool (12 total = 4 full slots)
+                    // Balanced so each team plays 2-3 matches (A1,A3,B1,B3 play 3; others play 2)
+                    poolAMatches = [
+                        [poolATeams[0], poolATeams[1]], // A1-A2 (A1:1, A2:1)
+                        [poolATeams[2], poolATeams[3]], // A3-A4 (A3:1, A4:1)
+                        [poolATeams[0], poolATeams[4]], // A1-A5 (A1:2, A5:1)
+                        [poolATeams[1], poolATeams[2]], // A2-A3 (A2:2, A3:2)
+                        [poolATeams[3], poolATeams[4]], // A4-A5 (A4:2, A5:2)
+                        [poolATeams[0], poolATeams[2]]  // A1-A3 (A1:3, A3:3) - ensures top teams play each other
+                    ];
+                    poolBMatches = [
+                        [poolBTeams[0], poolBTeams[1]], // B1-B2 (B1:1, B2:1)
+                        [poolBTeams[2], poolBTeams[3]], // B3-B4 (B3:1, B4:1)
+                        [poolBTeams[0], poolBTeams[4]], // B1-B5 (B1:2, B5:1)
+                        [poolBTeams[1], poolBTeams[2]], // B2-B3 (B2:2, B3:2)
+                        [poolBTeams[3], poolBTeams[4]], // B4-B5 (B4:2, B5:2)
+                        [poolBTeams[0], poolBTeams[2]]  // B1-B3 (B1:3, B3:3) - ensures top teams play each other
+                    ];
+                } else {
+                    // 9 teams: Balanced format - Pool A has 8 matches, Pool B has 4 matches = 12 total (4 full slots)
+                    // Pool A (5 teams): Each team plays 3-4 matches
+                    poolAMatches = [
+                        [poolATeams[0], poolATeams[1]], // A1-A2 (A1:1, A2:1)
+                        [poolATeams[2], poolATeams[3]], // A3-A4 (A3:1, A4:1)
+                        [poolATeams[0], poolATeams[4]], // A1-A5 (A1:2, A5:1)
+                        [poolATeams[1], poolATeams[2]], // A2-A3 (A2:2, A3:2)
+                        [poolATeams[3], poolATeams[4]], // A4-A5 (A4:2, A5:2)
+                        [poolATeams[1], poolATeams[4]], // A2-A5 (A2:3, A5:3)
+                        [poolATeams[0], poolATeams[3]], // A1-A4 (A1:3, A4:3)
+                        [poolATeams[2], poolATeams[4]]  // A3-A5 (A3:3, A5:4) - A5 plays 4 to balance
+                    ];
+                    // Pool B (4 teams): Each team plays 2 matches
+                    poolBMatches = [
+                        [poolBTeams[0], poolBTeams[1]], // B1-B2
+                        [poolBTeams[2], poolBTeams[3]], // B3-B4
+                        [poolBTeams[0], poolBTeams[2]], // B1-B3
+                        [poolBTeams[1], poolBTeams[3]]  // B2-B4
+                    ];
+                }
+            } else {
+                // Full round-robin for all other team counts
+                poolAMatches = generateRoundRobin(poolATeams);
+                poolBMatches = generateRoundRobin(poolBTeams);
+            }
+            
+            // Combine and distribute matches across time slots (3 courts per slot)
+            const poolPlaySchedule = distributeMatches(poolAMatches, poolBMatches);
+            
+            // Generate pool play HTML
+            let html = '<div class="round-section"><div class="round-header">🎾 POOL PLAY (7:00 AM)</div>';
+            
+            poolPlaySchedule.forEach((slot, idx) => {
+                const slotNumber = idx + 1;
+                const timeLabel = formatTimeSlot(slotNumber);
+                html += generateTimeSlot(slotNumber, timeLabel, slot);
+            });
+            
+            html += '</div>';
+            
+            // Add format-specific info message
+            if (actualTeamCount === 8) {
+                html += '<div class="flow-info"><strong>📊 Extended Format:</strong> 6 slots pool play (4 competitive + 1 revenge match each) → 2 slots compressed playoffs!</div>';
+            } else {
+                html += '<div class="flow-info"><strong>📊 Full 2-Hour Format:</strong> Pool play + Playoffs + Friendly matches to maximize playing time!</div>';
+            }
+            
+            // Generate playoffs if we have enough teams
+            if (actualTeamCount >= 4) {
+                html += generatePlayoffStructure(poolATeams.length, poolBTeams.length, poolPlaySchedule.length);
+            }
+            
+            content.innerHTML = html;
+        }
+        
+        function generateRoundRobin(teamList) {
+            const matches = [];
+            for (let i = 0; i < teamList.length; i++) {
+                for (let j = i + 1; j < teamList.length; j++) {
+                    matches.push([teamList[i], teamList[j]]);
+                }
+            }
+            return matches;
+        }
+        
+        function distributeThreePoolMatches(poolAMatches, poolBMatches, poolCMatches) {
+            // EXTENDED FORMAT: 6 slots of pool play (everyone plays exactly 4 matches)
+            // Slots 1-3: Intra-pool round-robin (9 matches total, each team plays 2)
+            // Slots 4-6: Full cross-pool round-robin (9 matches total, each team plays 2 more)
+            // Result: Every team plays exactly 4 matches for fair seeding
+            
+            // Extract unique teams from each pool's matches
+            const poolATeams = [...new Set(poolAMatches.flat())];
+            const poolBTeams = [...new Set(poolBMatches.flat())];
+            const poolCTeams = [...new Set(poolCMatches.flat())];
+            
+            return [
+                // Slots 1-3: Intra-pool round-robin (one match from each pool per slot)
+                [poolAMatches[0], poolBMatches[0], poolCMatches[0]], // Slot 1
+                [poolAMatches[1], poolBMatches[1], poolCMatches[1]], // Slot 2
+                [poolAMatches[2], poolBMatches[2], poolCMatches[2]], // Slot 3
+                
+                // Slot 4: Pool A vs Pool B cross-pool (all 3 teams from each)
+                [
+                    [poolATeams[0], poolBTeams[0]], // A1 vs B1
+                    [poolATeams[1], poolBTeams[1]], // A2 vs B2
+                    [poolATeams[2], poolBTeams[2]]  // A3 vs B3
+                ],
+                
+                // Slot 5: Pool A vs Pool C cross-pool (all 3 teams from each)
+                [
+                    [poolATeams[0], poolCTeams[0]], // A1 vs C1
+                    [poolATeams[1], poolCTeams[1]], // A2 vs C2
+                    [poolATeams[2], poolCTeams[2]]  // A3 vs C3
+                ],
+                
+                // Slot 6: Pool B vs Pool C cross-pool (all 3 teams from each)
+                [
+                    [poolBTeams[0], poolCTeams[0]], // B1 vs C1
+                    [poolBTeams[1], poolCTeams[1]], // B2 vs C2
+                    [poolBTeams[2], poolCTeams[2]]  // B3 vs C3
+                ]
+            ];
+        }
+        
+        function generateThreePoolPlayoffStructure(poolPlaySlots) {
+            const startSlot = poolPlaySlots + 1; // Should be 7 (after 6 pool play slots)
+            const slot1 = startSlot;     // Slot 7: Semifinals + 5th/7th place
+            const slot2 = startSlot + 1; // Slot 8: Championship + 3rd place + 9th place match
+            
+            const time1 = formatTimeSlot(slot1);
+            const time2 = formatTimeSlot(slot2);
+            
+            // COMPRESSED 2-slot playoff structure:
+            // Slot 7: Semifinals (Rank1 vs Rank4, Rank2 vs Rank3) + 5th place (Rank5 vs Rank6) 
+            // Slot 8: Championship + 3rd place + Placement (Rank7 vs Rank8, loser gets 9th)
+            
+            return `
+                <div class="round-section">
+                    <div class="round-header">🏆 PLAYOFFS - CROSS-POOL BRACKETS</div>
+                    ${generateTimeSlot(slot1, time1 + ' - SEMIFINALS & 5TH PLACE', [[null,null,'Rank1','Rank4','SEMIFINAL #1'], [null,null,'Rank2','Rank3','SEMIFINAL #2'], [null,null,'Rank5','Rank6','5TH PLACE MATCH']])}
+                    ${generateTimeSlot(slot2, time2 + ' - FINALS & PLACEMENT', [[null,null,'SF1W','SF2W','CHAMPIONSHIP MATCH'], [null,null,'SF1L','SF2L','3RD PLACE MATCH'], [null,null,'Rank7','Rank8','7TH PLACE MATCH']])}
+                </div>
+            `;
+        }
+        
+        function distributeMatches(poolAMatches, poolBMatches) {
+            // For both 16 players (4v4) and 20 players (5v5): 6 matches per pool = 12 total
+            // Need to distinguish between them and use optimized distributions
+            
+            if (poolAMatches.length === 6 && poolBMatches.length === 6) {
+                // Count unique teams to distinguish 8-team vs 10-team scenarios
+                const uniqueTeams = new Set();
+                poolAMatches.forEach(match => { uniqueTeams.add(match[0]); uniqueTeams.add(match[1]); });
+                poolBMatches.forEach(match => { uniqueTeams.add(match[0]); uniqueTeams.add(match[1]); });
+                
+                if (uniqueTeams.size === 8) {
+                    // 8 teams (4v4): Extended pool play with cross-pool matches
+                    // Pool A matches: [A1-A2, A3-A4, A1-A3, A2-A4, A1-A4, A2-A3]
+                    // Pool B matches: [B1-B2, B3-B4, B1-B3, B2-B4, B1-B4, B2-B3]
+                    
+                    // Extract unique teams for cross-pool matches
+                    const poolATeams = [...new Set(poolAMatches.flat())];
+                    const poolBTeams = [...new Set(poolBMatches.flat())];
+                    
+                    return [
+                        // Slots 1-4: Intra-pool round-robin (12 matches)
+                        [poolAMatches[0], poolBMatches[0], poolAMatches[1]], // Slot 1: A1-A2, B1-B2, A3-A4
+                        [poolAMatches[2], poolBMatches[1], poolAMatches[3]], // Slot 2: A1-A3, B3-B4, A2-A4
+                        [poolBMatches[2], poolAMatches[4], poolBMatches[3]], // Slot 3: B1-B3, A1-A4, B2-B4
+                        [poolAMatches[5], poolBMatches[4], poolBMatches[5]], // Slot 4: A2-A3, B1-B4, B2-B3
+                        // Slots 5-6: Cross-pool matches + revenge matches (use IDLE teams only!)
+                        [[poolATeams[0], poolBTeams[0]], [poolATeams[1], poolBTeams[1]], [null, null, poolATeams[2], poolATeams[3], 'REVENGE MATCH']], // Slot 5: A1vB1, A2vB2, A3vA4 rematch (A3/A4 idle)
+                        [[poolATeams[2], poolBTeams[2]], [poolATeams[3], poolBTeams[3]], [null, null, poolBTeams[0], poolBTeams[1], 'REVENGE MATCH']]  // Slot 6: A3vB3, A4vB4, B1vB2 rematch (B1/B2 idle)
+                    ];
+                } else if (uniqueTeams.size === 10) {
+                    // 10 teams (5v5): Optimal distribution to avoid conflicts
+                    return [
+                        [poolAMatches[0], poolBMatches[0], poolAMatches[1]], // Slot 1
+                        [poolBMatches[1], poolAMatches[2], poolBMatches[2]], // Slot 2
+                        [poolAMatches[3], poolBMatches[3], poolAMatches[4]], // Slot 3
+                        [poolBMatches[4], poolAMatches[5], poolBMatches[5]]  // Slot 4
+                    ];
+                } else if (uniqueTeams.size === 9) {
+                    // 9 teams (5v4): Optimal distribution - Pool A has 8 matches, Pool B has 4
+                    // Pool A matches: [A1-A2, A3-A4, A1-A5, A2-A3, A4-A5, A2-A5, A1-A4, A3-A5]
+                    // Pool B matches: [B1-B2, B3-B4, B1-B3, B2-B4]
+                    return [
+                        [poolAMatches[0], poolBMatches[0], poolAMatches[1]], // Slot 1: A1-A2, B1-B2, A3-A4
+                        [poolAMatches[2], poolBMatches[1], poolAMatches[3]], // Slot 2: A1-A5, B3-B4, A2-A3
+                        [poolBMatches[2], poolAMatches[4], poolBMatches[3]], // Slot 3: B1-B3, A4-A5, B2-B4
+                        [poolAMatches[6], poolAMatches[5], poolAMatches[7]]  // Slot 4: A1-A4, A2-A5, A3-A5
+                    ];
+                }
+            }
+            
+            // For all other formats: Use original greedy algorithm
+            const schedule = [];
+            const usedAMatches = new Set();
+            const usedBMatches = new Set();
+            
+            while (usedAMatches.size < poolAMatches.length || usedBMatches.size < poolBMatches.length) {
+                const slot = [];
+                const teamsInSlot = new Set();
+                
+                // Interleave Pool A and Pool B matches
+                let aIdx = 0, bIdx = 0;
+                while (slot.length < 3 && (aIdx < poolAMatches.length || bIdx < poolBMatches.length)) {
+                    // Try Pool A match
+                    while (aIdx < poolAMatches.length) {
+                        if (!usedAMatches.has(aIdx)) {
+                            const match = poolAMatches[aIdx];
+                            if (!teamsInSlot.has(match[0]) && !teamsInSlot.has(match[1])) {
+                                slot.push(match);
+                                teamsInSlot.add(match[0]);
+                                teamsInSlot.add(match[1]);
+                                usedAMatches.add(aIdx);
+                                aIdx++;
+                                break;
+                            }
+                        }
+                        aIdx++;
+                    }
+                    
+                    if (slot.length >= 3) break;
+                    
+                    // Try Pool B match
+                    while (bIdx < poolBMatches.length) {
+                        if (!usedBMatches.has(bIdx)) {
+                            const match = poolBMatches[bIdx];
+                            if (!teamsInSlot.has(match[0]) && !teamsInSlot.has(match[1])) {
+                                slot.push(match);
+                                teamsInSlot.add(match[0]);
+                                teamsInSlot.add(match[1]);
+                                usedBMatches.add(bIdx);
+                                bIdx++;
+                                break;
+                            }
+                        }
+                        bIdx++;
+                    }
+                    
+                    // If we couldn't add any more matches, break
+                    if (aIdx >= poolAMatches.length && bIdx >= poolBMatches.length) break;
+                }
+                
+                if (slot.length > 0) {
+                    schedule.push(slot);
+                } else {
+                    break;
+                }
+            }
+            
+            return schedule;
+        }
+        
+        function formatTimeSlot(slotNumber) {
+            // Each slot is 15 minutes, starting at 7:00 AM
+            const startMinutes = (slotNumber - 1) * 15;
+            const endMinutes = slotNumber * 15;
+            
+            const startHour = 7 + Math.floor(startMinutes / 60);
+            const startMin = startMinutes % 60;
+            const endHour = 7 + Math.floor(endMinutes / 60);
+            const endMin = endMinutes % 60;
+            
+            return `${startHour}:${String(startMin).padStart(2, '0')}-${endHour}:${String(endMin).padStart(2, '0')}`;
+        }
+        
+        function generatePlayoffStructure(poolASize, poolBSize, poolPlaySlots) {
+            const startSlot = poolPlaySlots + 1;
+            const totalSlots = 8; // Always use 8 slots (2 hours)
+            const remainingSlots = totalSlots - poolPlaySlots;
+            
+            // For 10 teams (5v5 pools) - Full placement brackets for 1st-10th
+            if (poolASize === 5 && poolBSize === 5) {
+                const slot1 = startSlot;
+                const slot2 = startSlot + 1;
+                const slot3 = startSlot + 2;
+                const slot4 = startSlot + 3;
+                const time1 = formatTimeSlot(slot1);
+                const time2 = formatTimeSlot(slot2);
+                const time3 = formatTimeSlot(slot3);
+                const time4 = formatTimeSlot(slot4);
+                return `
+                    <div class="round-section">
+                        <div class="round-header">🏆 PLAYOFFS - PLACEMENT BRACKETS</div>
+                        ${generateTimeSlot(slot1, time1 + ' - SEMIFINALS & 5TH PLACE', [[null,null,'A#1','B#2','SEMIFINAL #1'], [null,null,'B#1','A#2','SEMIFINAL #2'], [null,null,'A#3','B#3','5TH PLACE MATCH']])}
+                        ${generateTimeSlot(slot2, time2 + ' - PLACEMENT ROUNDS', [[null,null,'SF1L','SF2L','3RD PLACE MATCH'], [null,null,'A#4','B#4','7TH PLACE MATCH'], [null,null,'A#5','B#5','9TH PLACE MATCH']])}
+                        ${generateTimeSlot(slot3, time3 + ' - CHAMPIONSHIP & CONSOLATION', [[null,null,'SF1W','SF2W','CHAMPIONSHIP MATCH'], [null,null,'5thL','7thL','CONSOLATION'], [null,null,'SF1W','SF2W','FRIENDLY']])}
+                        ${generateTimeSlot(slot4, time4 + ' - VICTORY CELEBRATION', [[null,null,'ChampW','3rdW','FRIENDLY'], [null,null,'5thW','7thW','FRIENDLY'], [null,null,'ChampL','ConsolW','FRIENDLY']])}
+                    </div>
+                `;
+            }
+            
+            // For 9 teams (5v4 pools) - Full placement brackets for 1st-9th
+            if (poolASize === 5 && poolBSize === 4) {
+                const slot1 = startSlot;
+                const slot2 = startSlot + 1;
+                const slot3 = startSlot + 2;
+                const slot4 = startSlot + 3;
+                const time1 = formatTimeSlot(slot1);
+                const time2 = formatTimeSlot(slot2);
+                const time3 = formatTimeSlot(slot3);
+                const time4 = formatTimeSlot(slot4);
+                return `
+                    <div class="round-section">
+                        <div class="round-header">🏆 PLAYOFFS - PLACEMENT BRACKETS</div>
+                        ${generateTimeSlot(slot1, time1 + ' - SEMIFINALS & 5TH PLACE', [[null,null,'A#1','B#2','SEMIFINAL #1'], [null,null,'B#1','A#2','SEMIFINAL #2'], [null,null,'A#3','B#3','5TH PLACE MATCH']])}
+                        ${generateTimeSlot(slot2, time2 + ' - PLACEMENT ROUNDS', [[null,null,'SF1L','SF2L','3RD PLACE MATCH'], [null,null,'A#4','B#4','7TH PLACE MATCH'], [null,null,'SF1W','SF2W','FRIENDLY']])}
+                        ${generateTimeSlot(slot3, time3 + ' - CHAMPIONSHIP & CONSOLATION', [[null,null,'SF1W','SF2W','CHAMPIONSHIP MATCH'], [null,null,'5thL','7thL','CONSOLATION'], [null,null,'3rdL','5thW','FRIENDLY']])}
+                        ${generateTimeSlot(slot4, time4 + ' - VICTORY CELEBRATION', [[null,null,'ChampW','3rdW','FRIENDLY'], [null,null,'5thW','7thW','FRIENDLY'], [null,null,'ChampL','ConsolW','FRIENDLY']])}
+                    </div>
+                `;
+            }
+            
+            // For 8 teams (4v4 pools) - EXTENDED FORMAT: Compressed playoffs in 2 slots
+            if (poolASize === 4 && poolBSize === 4) {
+                const slot1 = startSlot;
+                const slot2 = startSlot + 1;
+                const time1 = formatTimeSlot(slot1);
+                const time2 = formatTimeSlot(slot2);
+                return `
+                    <div class="round-section">
+                        <div class="round-header">🏆 PLAYOFFS - PLACEMENT BRACKETS</div>
+                        ${generateTimeSlot(slot1, time1 + ' - SEMIFINALS & 5TH PLACE', [[null,null,'A#1','B#2','SEMIFINAL #1'], [null,null,'B#1','A#2','SEMIFINAL #2'], [null,null,'A#3','B#3','5TH PLACE MATCH']])}
+                        ${generateTimeSlot(slot2, time2 + ' - CHAMPIONSHIP & PLACEMENT', [[null,null,'SF1W','SF2W','CHAMPIONSHIP MATCH'], [null,null,'SF1L','SF2L','3RD PLACE MATCH'], [null,null,'A#4','B#4','7TH PLACE MATCH']])}
+                    </div>
+                `;
+            }
+            
+            // For 7 teams (4v3 pools) - Balanced 5-6 matches per team
+            if (poolASize === 4 && poolBSize === 3) {
+                const slot1 = startSlot;
+                const slot2 = startSlot + 1;
+                const slot3 = startSlot + 2;
+                const slot4 = startSlot + 3;
+                const time1 = formatTimeSlot(slot1);
+                const time2 = formatTimeSlot(slot2);
+                const time3 = formatTimeSlot(slot3);
+                const time4 = formatTimeSlot(slot4);
+                return `
+                    <div class="round-section">
+                        <div class="round-header">🏆 PLAYOFFS - PLACEMENT BRACKETS</div>
+                        ${generateTimeSlot(slot1, time1 + ' - SEMIFINALS & 5TH PLACE', [[null,null,'A#1','B#2','SEMIFINAL #1'], [null,null,'B#1','A#2','SEMIFINAL #2'], [null,null,'A#3','B#3','5TH PLACE MATCH']])}
+                        ${generateTimeSlot(slot2, time2 + ' - PLACEMENT ROUNDS', [[null,null,'SF1L','SF2L','3RD PLACE MATCH'], [null,null,'A#4','B#3','7TH PLACE MATCH'], [null,null,'SF1W','SF2W','FRIENDLY']])}
+                        ${generateTimeSlot(slot3, time3 + ' - CHAMPIONSHIP & CONSOLATION', [[null,null,'SF1W','SF2W','CHAMPIONSHIP MATCH'], [null,null,'5thL','7thL','CONSOLATION'], [null,null,'3rdL','5thW','FRIENDLY']])}
+                        ${generateTimeSlot(slot4, time4 + ' - VICTORY CELEBRATION', [[null,null,'ChampW','3rdW','FRIENDLY'], [null,null,'5thW','7thW','FRIENDLY'], [null,null,'ChampL','ConsolW','FRIENDLY']])}
+                    </div>
+                `;
+            }
+            
+            // For 6 teams (3v3 pools) - Balanced 5-6 matches per team
+            if (poolASize === 3 && poolBSize === 3) {
+                const slot1 = startSlot;
+                const slot2 = startSlot + 1;
+                const slot3 = startSlot + 2;
+                const slot4 = startSlot + 3;
+                const time1 = formatTimeSlot(slot1);
+                const time2 = formatTimeSlot(slot2);
+                const time3 = formatTimeSlot(slot3);
+                const time4 = formatTimeSlot(slot4);
+                return `
+                    <div class="round-section">
+                        <div class="round-header">🏆 PLAYOFFS - PLACEMENT BRACKETS</div>
+                        ${generateTimeSlot(slot1, time1 + ' - SEMIFINALS & 5TH PLACE', [[null,null,'A#1','B#2','SEMIFINAL #1'], [null,null,'B#1','A#2','SEMIFINAL #2'], [null,null,'A#3','B#3','5TH PLACE MATCH']])}
+                        ${generateTimeSlot(slot2, time2 + ' - PLACEMENT ROUNDS', [[null,null,'SF1L','SF2L','3RD PLACE MATCH'], [null,null,'SF1W','SF2W','FRIENDLY'], [null,null,'A#3','B#3','FRIENDLY']])}
+                        ${generateTimeSlot(slot3, time3 + ' - CHAMPIONSHIP & CONSOLATION', [[null,null,'SF1W','SF2W','CHAMPIONSHIP MATCH'], [null,null,'3rdL','5thW','FRIENDLY'], [null,null,'3rdW','5thL','FRIENDLY']])}
+                        ${generateTimeSlot(slot4, time4 + ' - VICTORY CELEBRATION', [[null,null,'ChampW','3rdW','FRIENDLY'], [null,null,'ChampL','ConsolW','FRIENDLY'], [null,null,'5thW','5thL','FRIENDLY']])}
+                    </div>
+                `;
+            }
+            
+            // For 2-3 teams - add friendlies to fill 2 hours and all courts
+            let html = `<div class="round-section"><div class="round-header">🏆 CHAMPIONSHIP & FRIENDLIES</div>`;
+            const additionalSlots = totalSlots - poolPlaySlots;
+            
+            for (let i = 0; i < additionalSlots; i++) {
+                const slotNum = startSlot + i;
+                const time = formatTimeSlot(slotNum);
+                if (i === 0) {
+                    html += generateTimeSlot(slotNum, time + ' - FINAL', [[null,null,'A#1','B#1','CHAMPIONSHIP MATCH'], [null,null,'A#1','B#1','REMATCH'], [null,null,'A#2','B#2','FRIENDLY']]);
+                } else {
+                    html += generateTimeSlot(slotNum, time + ' - CELEBRATION', [[null,null,'A#1','B#1','FRIENDLY'], [null,null,'A#2','B#2','FRIENDLY'], [null,null,'A#1','A#2','FRIENDLY']]);
+                }
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        function generateTimeSlot(slot, time, matchups) {
+            let html = `<div class="time-slot"><div class="time-title">⏰ SLOT ${slot}: ${time}</div><div class="courts-grid">`;
+            
+            // Always generate all 3 courts, even if match data is incomplete
+            for (let courtIdx = 0; courtIdx < 3; courtIdx++) {
+                const match = matchups[courtIdx];
+                html += `
+                    <div class="court-card">
+                        <div class="court-title">COURT ${courtIdx + 1}</div>
+                        <div class="match-box" id="slot${slot}court${courtIdx}">`;
+                
+                if (match && match.length >= 2) {
+                    const t1 = match[2] || match[0];
+                    const t2 = match[3] || match[1];
+                    const matchLabel = match[4] || null;
+                    html += generateMatch(slot, courtIdx, t1, t2, matchLabel);
+                } else {
+                    html += `<div style="text-align: center; color: #999; padding: 20px;">No match scheduled</div>`;
+                }
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `</div></div>`;
+            return html;
+        }
+        
+        function generateMatch(slot, court, team1Id, team2Id, matchLabel) {
+            const matchId = `s${slot}c${court}`;
+            
+            // Handle idle court
+            if (team1Id === 'idle') {
+                return `<div style="text-align: center; color: #999; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+                    <div style="font-size: 40px; margin-bottom: 10px;">⏸️</div>
+                    <strong>Court Idle</strong><br>
+                    <small>No match scheduled - only 2 courts needed this round</small>
+                </div>`;
+            }
+            
+            const team1 = teams[team1Id];
+            const team2 = teams[team2Id];
+            
+            // Store team IDs for this match
+            matchTeamData[matchId] = { team1Id, team2Id };
+            
+            if (!team1 || !team2) {
+                return `<div style="text-align: center; color: #999; padding: 20px;">Awaiting previous results...</div>`;
+            }
+            
+            // Determine match type label - prioritize passed matchLabel parameter
+            let specialLabel = '';
+            
+            if (matchLabel && matchLabel !== 'FRIENDLY' && matchLabel !== 'NO MATCH') {
+                // Use provided match label with styled display
+                const labelConfig = {
+                    'SEMIFINAL #1': { emoji: '🎯', style: 'background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
+                    'SEMIFINAL #2': { emoji: '🎯', style: 'background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
+                    'CHAMPIONSHIP MATCH': { emoji: '🏆', style: 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 20px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); animation: pulse 2s infinite;' },
+                    '3RD PLACE MATCH': { emoji: '🥉', style: 'background: linear-gradient(135deg, #ffa751 0%, #ffe259 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
+                    '5TH PLACE MATCH': { emoji: '🏅', style: 'background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
+                    '7TH PLACE MATCH': { emoji: '🎖️', style: 'background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
+                    '9TH PLACE MATCH': { emoji: '🏷️', style: 'background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
+                    'CHALLENGE MATCH': { emoji: '⚔️', style: 'background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
+                    'WARMUP': { emoji: '⚡', style: 'background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
+                    'CONSOLATION': { emoji: '🤝', style: 'background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); color: white; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);' },
+                    'REVENGE MATCH': { emoji: '⚔️', style: 'background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #2d3436; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 2px solid #fdcb6e;' }
+                };
+                const config = labelConfig[matchLabel] || { emoji: '🏆', style: 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);' };
+                specialLabel = `<div style="${config.style}">${config.emoji} ${matchLabel} ${config.emoji}</div>`;
+            } else if (matchLabel === 'FRIENDLY') {
+                specialLabel = '<div style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); color: white; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">🤝 FRIENDLY MATCH 🤝</div>';
+            } else if (matchLabel === 'POOL PLAY') {
+                // Cross-pool matches in extended pool play format (Slots 4-5 for 9-team tournaments)
+                specialLabel = '<div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">🎾 POOL PLAY (Cross-Pool) 🎾</div>';
+            } else {
+                // Legacy slot-based detection (for 12-14 player tournaments without explicit labels)
+                // Skip legacy detection for extended format tournaments (8-team and 9-team use explicit labels)
+                const totalTeams = Object.keys(teams).length;
+                const isSemifinal = (totalTeams !== 9 && totalTeams !== 8 && slot === 5 && court <= 1);
+                const isChampionship = (totalTeams !== 9 && totalTeams !== 8 && slot === 7 && court === 0);
+                const isFifthPlace = (totalTeams !== 9 && totalTeams !== 8 && slot === 7 && court === 1);
+                const isSeventhPlace = (totalTeams !== 9 && totalTeams !== 8 && slot === 7 && court === 2);
+                const isThirdPlace = (totalTeams !== 9 && totalTeams !== 8 && slot === 8 && court === 0);
+                const isCrossFriendly = (totalTeams !== 9 && totalTeams !== 8 && slot === 8 && (court === 1 || court === 2));
+                
+                if (isChampionship) {
+                    specialLabel = '<div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 12px 20px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); animation: pulse 2s infinite;">🏆 CHAMPIONSHIP MATCH 🏆</div>';
+                } else if (isSemifinal) {
+                    const sfNum = court === 0 ? '#1' : '#2';
+                    specialLabel = `<div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">🎯 SEMIFINAL ${sfNum} 🎯</div>`;
+                } else if (isThirdPlace) {
+                    specialLabel = '<div style="background: linear-gradient(135deg, #ffa751 0%, #ffe259 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">🥉 3RD PLACE MATCH 🥉</div>';
+                } else if (isFifthPlace) {
+                    specialLabel = '<div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">🏅 5TH PLACE MATCH 🏅</div>';
+                } else if (isSeventhPlace) {
+                    specialLabel = '<div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">🎖️ 7TH PLACE MATCH 🎖️</div>';
+                } else if (isCrossFriendly) {
+                    specialLabel = '<div style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); color: white; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">🤝 FRIENDLY MATCH 🤝</div>';
+                }
+            }
+            
+            return `
+                ${specialLabel}
+                <div class="team-display" id="${matchId}-t1">
+                    <div class="team-name">${team1.name}</div>
+                    <div class="players">${team1.p1} & ${team1.p2}</div>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team-display" id="${matchId}-t2">
+                    <div class="team-name">${team2.name}</div>
+                    <div class="players">${team2.p1} & ${team2.p2}</div>
+                </div>
+                <div class="score-entry">
+                    <input type="number" class="score-input" id="${matchId}-s1" min="0" max="99" placeholder="0">
+                    <span style="font-size: 24px;">-</span>
+                    <input type="number" class="score-input" id="${matchId}-s2" min="0" max="99" placeholder="0">
+                </div>
+                <button class="submit-score" onclick="submitScore(${slot}, ${court}, '${team1Id}', '${team2Id}', '${matchLabel || ''}')">
+                    ✓ Submit Score
+                </button>
+            `;
+        }
+        
+        function submitScore(slot, court, team1Id, team2Id, matchLabel) {
+            const matchId = `s${slot}c${court}`;
+            const score1 = parseInt(document.getElementById(`${matchId}-s1`).value) || 0;
+            const score2 = parseInt(document.getElementById(`${matchId}-s2`).value) || 0;
+            
+            if (score1 === 0 && score2 === 0) {
+                alert('Please enter scores for both teams!');
+                return;
+            }
+            
+            // Check if already submitted
+            if (completedMatches.has(matchId)) {
+                alert('This match score has already been submitted!');
+                return;
+            }
+            
+            // Determine winner
+            const winner = score1 > score2 ? team1Id : team2Id;
+            const loser = score1 > score2 ? team2Id : team1Id;
+            
+            // Mark as completed
+            completedMatches.add(matchId);
+            
+            // Update pool standings if pool play
+            const poolATeams = Object.keys(teams).filter(t => teams[t].pool === 'A');
+            const poolBTeams = Object.keys(teams).filter(t => teams[t].pool === 'B');
+            const poolCTeams = Object.keys(teams).filter(t => teams[t].pool === 'C');
+            
+            // Calculate total pool matches based on format
+            let totalPoolMatches;
+            if (poolCTeams.length === 3) {
+                // 3-pool EXTENDED format (9 teams): 9 intra-pool + 9 cross-pool = 18 total across 6 slots
+                totalPoolMatches = 18;
+            } else if (poolATeams.length === 4 && poolBTeams.length === 4) {
+                totalPoolMatches = 16; // 2-pool EXTENDED format: 12 intra-pool + 4 cross-pool = 16 total across 6 slots
+            } else if (poolATeams.length === 5 && poolBTeams.length === 4) {
+                totalPoolMatches = 12; // Modified 9-team format: 8 Pool A + 4 Pool B (12 total)
+            } else if (poolATeams.length === 5 && poolBTeams.length === 5) {
+                totalPoolMatches = 12; // Modified 10-team format: 6 matches per pool (12 total)
+            } else {
+                totalPoolMatches = poolATeams.length * (poolATeams.length - 1) / 2 + 
+                                  poolBTeams.length * (poolBTeams.length - 1) / 2;
+            }
+            
+            const poolPlaySlots = Math.ceil(totalPoolMatches / 3);
+            
+            // Skip pool standings update for non-competitive matches (friendlies/revenge matches)
+            const isNonCompetitive = matchLabel === 'REVENGE MATCH' || matchLabel === 'FRIENDLY';
+            
+            if (slot <= poolPlaySlots && !poolPlayEnded && !isNonCompetitive) {
+                // Update pool standings for both teams (handles cross-pool matches)
+                const winnerPool = teams[winner].pool;
+                const loserPool = teams[loser].pool;
+                
+                poolStandings[winnerPool][winner].wins++;
+                poolStandings[winnerPool][winner].points += score1 > score2 ? score1 : score2;
+                poolStandings[loserPool][loser].losses++;
+                
+                console.log(`Pool standings updated for ${winner} (Pool ${winnerPool}): ${poolStandings[winnerPool][winner].wins}W-${poolStandings[winnerPool][winner].losses}L`);
+                console.log(`Pool standings updated for ${loser} (Pool ${loserPool}): ${poolStandings[loserPool][loser].wins}W-${poolStandings[loserPool][loser].losses}L`);
+                
+                // Store pool play result
+                poolPlayResults.push({
+                    slot,
+                    court,
+                    team1: teams[team1Id],
+                    team2: teams[team2Id],
+                    score1,
+                    score2,
+                    winner: teams[winner]
+                });
+                
+                // Check if ALL pool play matches are complete
+                const poolPlayMatchIds = [];
+                for (let s = 1; s <= poolPlaySlots; s++) {
+                    for (let c = 0; c < 3; c++) {
+                        poolPlayMatchIds.push(`s${s}c${c}`);
+                    }
+                }
+                
+                // For 8-team extended format, exclude revenge matches from completion count
+                // Revenge matches are at Slot 5 Court 3 and Slot 6 Court 3
+                const revengeMatchIds = [];
+                if (poolATeams.length === 4 && poolBTeams.length === 4) {
+                    revengeMatchIds.push('s5c2', 's6c2'); // Court 3 = index 2
+                }
+                
+                const completedPoolMatches = poolPlayMatchIds.filter(m => 
+                    completedMatches.has(m) && !revengeMatchIds.includes(m)
+                ).length;
+                
+                if (completedPoolMatches >= totalPoolMatches) {
+                    poolPlayEnded = true; // Set flag to prevent further pool standings updates
+                    console.log('Pool play ended - pool standings frozen');
+                    calculatePoolRankings();
+                }
+            }
+            
+            // Mark winner visually
+            document.getElementById(`${matchId}-t${score1 > score2 ? '1' : '2'}`).classList.add('winner');
+            const submitBtn = document.querySelector(`#slot${slot}court${court} .submit-score`);
+            submitBtn.disabled = true;
+            submitBtn.textContent = '✓ Score Recorded';
+            
+            // Add edit button
+            const editBtn = document.createElement('button');
+            editBtn.className = 'edit-score-btn';
+            editBtn.textContent = '✏️ Edit Score';
+            editBtn.onclick = () => editScore(slot, court, team1Id, team2Id);
+            submitBtn.parentElement.appendChild(editBtn);
+            
+            // Store result for playoff progression
+            matches.push({ slot, court, team1Id, team2Id, score1, score2, winner, loser });
+            
+            // Auto-advance to next round
+            advanceTournament(slot, court, winner, loser);
+        }
+        
+        function calculatePoolRankings() {
+            // Check if this is a 3-pool tournament
+            const has3Pools = poolStandings.C && Object.keys(poolStandings.C).length > 0;
+            
+            if (has3Pools) {
+                // Handle 3-pool tournament (9 teams)
+                ['A', 'B', 'C'].forEach(pool => {
+                    if (Object.keys(poolStandings[pool]).length === 0) return;
+                    
+                    const sorted = Object.entries(poolStandings[pool])
+                        .sort((a, b) => {
+                            if (b[1].wins !== a[1].wins) return b[1].wins - a[1].wins;
+                            return b[1].points - a[1].points;
+                        });
+                    
+                    console.log(`Pool ${pool} rankings:`, sorted.map(([id, stats]) => ({id, wins: stats.wins, points: stats.points})));
+                    
+                    sorted.forEach((entry, idx) => {
+                        poolStandings[pool][entry[0]].rank = idx + 1;
+                        console.log(`  Rank ${idx + 1}: Team ${entry[0]} (${entry[1].wins} wins, ${entry[1].points} points)`);
+                    });
+                });
+                
+                // Create cross-pool rankings (all 9 teams ranked together)
+                const allTeams = [];
+                ['A', 'B', 'C'].forEach(pool => {
+                    Object.keys(poolStandings[pool]).forEach(teamId => {
+                        allTeams.push({
+                            id: teamId,
+                            pool,
+                            wins: poolStandings[pool][teamId].wins,
+                            points: poolStandings[pool][teamId].points,
+                            poolRank: poolStandings[pool][teamId].rank
+                        });
+                    });
+                });
+                
+                // Sort by wins first, then points, then pool rank
+                allTeams.sort((a, b) => {
+                    if (b.wins !== a.wins) return b.wins - a.wins;
+                    if (b.points !== a.points) return b.points - a.points;
+                    return a.poolRank - b.poolRank;
+                });
+                
+                console.log('Cross-pool rankings:', allTeams);
+                
+                // Display pool completion screen
+                showPoolCompleteScreen();
+                
+                // Seed playoffs based on cross-pool rankings
+                // UPDATED: Pool play now takes 6 slots (full cross-pool round-robin)
+                const slot1 = 7; // Semifinals slot (after 6 pool play slots)
+                const slot2 = 8; // Championship/placement slot
+                
+                // UPDATED SEEDING: More balanced semifinals (1v4, 2v3 instead of 1v2, 3v4)
+                updateMatch(slot1, 0, allTeams[0].id, allTeams[3].id, 'SEMIFINAL #1');  // Rank1 vs Rank4
+                updateMatch(slot1, 1, allTeams[1].id, allTeams[2].id, 'SEMIFINAL #2');  // Rank2 vs Rank3
+                updateMatch(slot1, 2, allTeams[4].id, allTeams[5].id, '5TH PLACE MATCH');  // Rank5 vs Rank6
+                
+                // Populate 7th place match (Slot 8)
+                updateMatch(slot2, 2, allTeams[6].id, allTeams[7].id, '7TH PLACE MATCH');  // Rank7 vs Rank8
+                
+                // Set 9th place automatically
+                finalPlacements[9] = allTeams[8].id;
+                updateFinalStandings();
+                
+                return;
+            }
+            
+            // Handle 2-pool tournament (original logic)
+            ['A', 'B'].forEach(pool => {
+                if (Object.keys(poolStandings[pool]).length === 0) return;
+                
+                const sorted = Object.entries(poolStandings[pool])
+                    .sort((a, b) => {
+                        if (b[1].wins !== a[1].wins) return b[1].wins - a[1].wins;
+                        return b[1].points - a[1].points;
+                    });
+                
+                console.log(`Pool ${pool} rankings:`, sorted.map(([id, stats]) => ({id, wins: stats.wins, points: stats.points})));
+                
+                sorted.forEach((entry, idx) => {
+                    poolStandings[pool][entry[0]].rank = idx + 1;
+                    console.log(`  Rank ${idx + 1}: Team ${entry[0]} (${entry[1].wins} wins, ${entry[1].points} points)`);
+                });
+            });
+            
+            // Display pool completion on screen
+            showPoolCompleteScreen();
+            
+            // Get ranked teams from each pool
+            const poolATeams = Object.keys(poolStandings.A).filter(t => poolStandings.A[t]);
+            const poolBTeams = Object.keys(poolStandings.B).filter(t => poolStandings.B[t]);
+            
+            const a1 = poolATeams.find(t => poolStandings.A[t].rank === 1);
+            const a2 = poolATeams.find(t => poolStandings.A[t].rank === 2);
+            const b1 = poolBTeams.find(t => poolStandings.B[t].rank === 1);
+            const b2 = poolBTeams.find(t => poolStandings.B[t].rank === 2);
+            
+            // Advance to playoffs based on team count
+            const totalTeams = poolATeams.length + poolBTeams.length;
+            
+            // Calculate pool play slots for dynamic slot numbering
+            let totalPoolMatches;
+            if (poolATeams.length === 4 && poolBTeams.length === 4) {
+                totalPoolMatches = 16; // 2-pool EXTENDED format: 12 intra-pool + 4 cross-pool = 6 slots
+            } else if (poolATeams.length === 5 && poolBTeams.length === 4) {
+                totalPoolMatches = 12;
+            } else if (poolATeams.length === 5 && poolBTeams.length === 5) {
+                totalPoolMatches = 12;
+            } else {
+                totalPoolMatches = poolATeams.length * (poolATeams.length - 1) / 2 + 
+                                  poolBTeams.length * (poolBTeams.length - 1) / 2;
+            }
+            const poolPlaySlots = Math.ceil(totalPoolMatches / 3);
+            const slot1 = poolPlaySlots + 1;
+            
+            if (totalTeams === 10) {
+                // 10-team bracket (5v5 pools)
+                updateMatch(slot1, 0, a1, b2);  // Semifinal 1
+                updateMatch(slot1, 1, b1, a2);  // Semifinal 2
+                
+                const a3 = poolATeams.find(t => poolStandings.A[t].rank === 3);
+                const a4 = poolATeams.find(t => poolStandings.A[t].rank === 4);
+                const a5 = poolATeams.find(t => poolStandings.A[t].rank === 5);
+                const b3 = poolBTeams.find(t => poolStandings.B[t].rank === 3);
+                const b4 = poolBTeams.find(t => poolStandings.B[t].rank === 4);
+                const b5 = poolBTeams.find(t => poolStandings.B[t].rank === 5);
+                
+                updateMatch(slot1, 2, a3, b3);  // 5th Place Match
+                
+                // Also populate 7th and 9th place matches immediately
+                const slot2 = slot1 + 1;
+                console.log('10-team: Populating 7th place:', slot2, 1, a4, b4);
+                updateMatch(slot2, 1, a4, b4);  // 7th Place Match
+                console.log('10-team: Populating 9th place:', slot2, 2, a5, b5);
+                updateMatch(slot2, 2, a5, b5);  // 9th Place Match
+            } else if (totalTeams === 9) {
+                // 9-team bracket (5v4 pools)
+                updateMatch(slot1, 0, a1, b2);  // Semifinal 1
+                updateMatch(slot1, 1, b1, a2);  // Semifinal 2
+                
+                const a3 = poolATeams.find(t => poolStandings.A[t].rank === 3);
+                const a4 = poolATeams.find(t => poolStandings.A[t].rank === 4);
+                const a5 = poolATeams.find(t => poolStandings.A[t].rank === 5);
+                const b3 = poolBTeams.find(t => poolStandings.B[t].rank === 3);
+                const b4 = poolBTeams.find(t => poolStandings.B[t].rank === 4);
+                
+                updateMatch(slot1, 2, a3, b3);  // 5th Place Match
+                
+                // Also populate 7th place match immediately (A4 vs B4)
+                const slot2 = slot1 + 1;
+                console.log('9-team: Populating 7th place:', slot2, 1, a4, b4);
+                updateMatch(slot2, 1, a4, b4);  // 7th Place Match
+                
+                // 9th place is determined automatically (A#5 has no opponent)
+                finalPlacements[9] = a5;
+                updateFinalStandings();
+            } else if (totalTeams === 8) {
+                // 8-team bracket (4v4 pools) - EXTENDED COMPRESSED FORMAT
+                updateMatch(slot1, 0, a1, b2, 'SEMIFINAL #1');  // Semifinal 1
+                updateMatch(slot1, 1, b1, a2, 'SEMIFINAL #2');  // Semifinal 2
+                
+                const a3 = poolATeams.find(t => poolStandings.A[t].rank === 3);
+                const a4 = poolATeams.find(t => poolStandings.A[t].rank === 4);
+                const b3 = poolBTeams.find(t => poolStandings.B[t].rank === 3);
+                const b4 = poolBTeams.find(t => poolStandings.B[t].rank === 4);
+                
+                updateMatch(slot1, 2, a3, b3, '5TH PLACE MATCH');  // 5th Place Match (cross-pool #3s)
+                
+                // Also populate 7th place match immediately (A4 vs B4)
+                const slot2 = slot1 + 1;
+                console.log('8-team: Populating 7th place match at slot', slot2, 'court 2 with teams:', a4, 'vs', b4);
+                updateMatch(slot2, 2, a4, b4, '7TH PLACE MATCH');  // 7th Place Match
+            } else if (totalTeams === 7) {
+                // 7-team bracket (4v3 pools) - 7th place determined after 5th place match
+                updateMatch(slot1, 0, a1, b2);  // Semifinal 1
+                updateMatch(slot1, 1, b1, a2);  // Semifinal 2
+                
+                const a3 = poolATeams.find(t => poolStandings.A[t].rank === 3);
+                const b3 = poolBTeams.find(t => poolStandings.B[t].rank === 3);
+                
+                updateMatch(slot1, 2, a3, b3);  // 5th Place Match
+                
+                // 7th place match (A#4 vs loser of 5th) will be populated after 5th place completes
+                // See advanceTournament() handler for slot/court === semifinalSlot/2
+            } else if (totalTeams === 6) {
+                // 6-team bracket (3v3 pools)
+                updateMatch(slot1, 0, a1, b2);  // Semifinal 1
+                updateMatch(slot1, 1, b1, a2);  // Semifinal 2
+                
+                const a3 = poolATeams.find(t => poolStandings.A[t].rank === 3);
+                const b3 = poolBTeams.find(t => poolStandings.B[t].rank === 3);
+                
+                // 5th place match in same slot as semifinals (court 2)
+                updateMatch(slot1, 2, a3, b3);  // 5th Place Match (A#3 vs B#3)
+            } else if (totalTeams >= 4 && b1 && a2) {
+                // Standard bracket for other team counts (fallback)
+                updateMatch(slot1, 0, a1, b2);
+                updateMatch(slot1, 1, b1, a2);
+            } else if (a1 && b1) {
+                // Just a championship match for 2-3 teams
+                updateMatch(slot1, 0, a1, b1);
+            }
+        }
+        
+        function showPoolCompleteScreen() {
+            const has3Pools = poolStandings.C && Object.keys(poolStandings.C).length > 0;
+            
+            const poolRankingsHTML = has3Pools ? `
+                <div class="pool-rank-section">
+                    <h3>🔴 Pool A Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('A')}
+                </div>
+                <div class="pool-rank-section">
+                    <h3>🔵 Pool B Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('B')}
+                </div>
+                <div class="pool-rank-section">
+                    <h3>🟢 Pool C Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('C')}
+                </div>
+            ` : `
+                <div class="pool-rank-section">
+                    <h3>🔴 Pool A Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('A')}
+                </div>
+                <div class="pool-rank-section">
+                    <h3>🔵 Pool B Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('B')}
+                </div>
+            `;
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'pool-complete-overlay';
+            overlay.innerHTML = `
+                <div class="pool-complete-card">
+                    <div class="pool-complete-header">🏆 Pool Play Complete!</div>
+                    
+                    <div class="pool-rankings">
+                        ${poolRankingsHTML}
+                    </div>
+                    <button class="continue-btn" onclick="closePoolComplete()">▶️ Continue to Playoffs</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            
+            // Add pool rankings to page
+            addPoolRankingsToPage();
+            
+            // Scroll to playoffs section
+            setTimeout(() => {
+                const playoffsSection = document.querySelector('.round-section:nth-of-type(2)');
+                if (playoffsSection) {
+                    playoffsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+        
+        function closePoolComplete() {
+            const overlay = document.querySelector('.pool-complete-overlay');
+            if (overlay) overlay.remove();
+        }
+        
+        function getRankingsHTML(pool) {
+            return Object.entries(poolStandings[pool])
+                .sort((a, b) => a[1].rank - b[1].rank)
+                .map(e => `<div class="rank-item">${e[1].rank}. ${teams[e[0]].name}: ${e[1].wins}W-${e[1].losses}L (${e[1].points} pts)</div>`)
+                .join('');
+        }
+        
+        function getRankingsWithPlayersHTML(pool) {
+            return Object.entries(poolStandings[pool])
+                .sort((a, b) => a[1].rank - b[1].rank)
+                .map(e => {
+                    const team = teams[e[0]];
+                    return `<div class="rank-item">
+                        ${e[1].rank}. ${team.name}: ${e[1].wins}W-${e[1].losses}L (${e[1].points} pts)<br>
+                        <small style="color: #666; margin-left: 20px;">${team.p1} & ${team.p2}</small>
+                    </div>`;
+                })
+                .join('');
+        }
+        
+        function addPoolRankingsToPage() {
+            // Find the pool play section
+            const poolSection = document.querySelector('.round-section');
+            
+            // Check if 3-pool tournament
+            const has3Pools = poolStandings.C && Object.keys(poolStandings.C).length > 0;
+            
+            const poolRankingsHTML = has3Pools ? `
+                <div class="pool-rank-section">
+                    <h3>🔴 Pool A Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('A')}
+                </div>
+                <div class="pool-rank-section">
+                    <h3>🔵 Pool B Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('B')}
+                </div>
+                <div class="pool-rank-section">
+                    <h3>🟢 Pool C Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('C')}
+                </div>
+            ` : `
+                <div class="pool-rank-section">
+                    <h3>🔴 Pool A Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('A')}
+                </div>
+                <div class="pool-rank-section">
+                    <h3>🔵 Pool B Final Rankings</h3>
+                    ${getRankingsWithPlayersHTML('B')}
+                </div>
+            `;
+            
+            // Create rankings display
+            const resultsDiv = document.createElement('div');
+            resultsDiv.className = 'pool-results-section';
+            resultsDiv.id = 'pool-results-display';
+            resultsDiv.innerHTML = `
+                <div class="pool-results-header">🏆 Pool Play Complete - Final Rankings</div>
+                <div class="pool-rankings" style="margin-top: 20px;">
+                    ${poolRankingsHTML}
+                </div>
+            `;
+            
+            // Insert after pool play section
+            poolSection.parentNode.insertBefore(resultsDiv, poolSection.nextSibling);
+        }
+        
+        function getRankingsText(pool) {
+            return Object.entries(poolStandings[pool])
+                .sort((a, b) => a[1].rank - b[1].rank)
+                .map(e => `${e[1].rank}. ${teams[e[0]].name}: ${e[1].wins}W-${e[1].losses}L`)
+                .join('\n');
+        }
+        
+        function advanceTournament(slot, court, winner, loser) {
+            // Store placement results in finalPlacements object
+            
+            // Calculate which slot semifinals are in based on pool play length
+            const poolATeams = Object.keys(teams).filter(t => teams[t].pool === 'A');
+            const poolBTeams = Object.keys(teams).filter(t => teams[t].pool === 'B');
+            const poolCTeams = Object.keys(teams).filter(t => teams[t].pool === 'C');
+            let totalPoolMatches;
+            if (poolCTeams.length === 3) {
+                totalPoolMatches = 18; // 3-pool EXTENDED format: 9 intra-pool + 9 cross-pool = 6 slots
+            } else if (poolATeams.length === 4 && poolBTeams.length === 4) {
+                totalPoolMatches = 16; // 2-pool EXTENDED format: 12 intra-pool + 4 cross-pool = 6 slots
+            } else if (poolATeams.length === 5 && poolBTeams.length === 4) {
+                totalPoolMatches = 12;
+            } else if (poolATeams.length === 5 && poolBTeams.length === 5) {
+                totalPoolMatches = 12;
+            } else {
+                totalPoolMatches = poolATeams.length * (poolATeams.length - 1) / 2 + 
+                                  poolBTeams.length * (poolBTeams.length - 1) / 2;
+            }
+            const poolPlaySlots = Math.ceil(totalPoolMatches / 3);
+            const semifinalSlot = poolPlaySlots + 1;
+            
+            // Semifinals (Courts 0-1) → advance to Championship & 3rd Place
+            // 5th Place Match (Court 2) → 5th/6th place
+            if (slot === semifinalSlot && court === 0) {
+                // Semifinal #1 complete - check if both semifinals done
+                const sf2Complete = matches.find(m => m.slot === semifinalSlot && m.court === 1 && m.winner);
+                if (sf2Complete && !advancementCompleted.has('semifinals')) {
+                    advancementCompleted.add('semifinals');
+                    const sf1 = matches.find(m => m.slot === semifinalSlot && m.court === 0);
+                    // Both semifinals done - set up Championship and 3rd place
+                    console.log('SF1 complete: Populating 3rd place and championship');
+                    
+                    // Use poolATeams/poolBTeams/poolCTeams already declared at function top
+                    const totalTeams = poolATeams.length + poolBTeams.length + poolCTeams.length;
+                    
+                    if (totalTeams === 9 || totalTeams === 8) {
+                        // COMPRESSED format (8-team and 9-team): Championship and 3rd place both at semifinalSlot+1
+                        console.log('  Championship (slot', semifinalSlot + 1, 'court 0):', sf1.winner, 'vs', sf2Complete.winner);
+                        console.log('  3rd place (slot', semifinalSlot + 1, 'court 1):', sf1.loser, 'vs', sf2Complete.loser);
+                        updateMatch(semifinalSlot + 1, 0, sf1.winner, sf2Complete.winner, 'CHAMPIONSHIP MATCH');
+                        updateMatch(semifinalSlot + 1, 1, sf1.loser, sf2Complete.loser, '3RD PLACE MATCH');
+                        // Court 2 already has 7th place match (seeded in calculatePoolRankings)
+                    } else {
+                        // Standard format: 3rd place first, then Championship
+                        console.log('  3rd place (slot', semifinalSlot + 1, 'court 0):', sf1.loser, 'vs', sf2Complete.loser);
+                        console.log('  Championship (slot', semifinalSlot + 2, 'court 0):', sf1.winner, 'vs', sf2Complete.winner);
+                        updateMatch(semifinalSlot + 1, 0, sf1.loser, sf2Complete.loser, '3RD PLACE MATCH');
+                        updateMatch(semifinalSlot + 2, 0, sf1.winner, sf2Complete.winner, 'CHAMPIONSHIP MATCH');
+                    }
+                    
+                    // Populate Championship Preview friendlies based on team count (skip for 9-team and 8-team)
+                    
+                    if (totalTeams === 6) {
+                        // 6-team: Slot 4 Court 2 (semifinalSlot+1, court 1)
+                        console.log('6-team: Populating Championship Preview at slot', semifinalSlot + 1, 'court 1:', sf1.winner, 'vs', sf2Complete.winner);
+                        updateMatch(semifinalSlot + 1, 1, sf1.winner, sf2Complete.winner, 'FRIENDLY');
+                    } else if (totalTeams === 7) {
+                        // 7-team: Slot 5 Court 3 (semifinalSlot+1, court 2)
+                        console.log('7-team: Populating Championship Preview at slot', semifinalSlot + 1, 'court 2:', sf1.winner, 'vs', sf2Complete.winner);
+                        updateMatch(semifinalSlot + 1, 2, sf1.winner, sf2Complete.winner, 'FRIENDLY');
+                    } else if (totalTeams === 10) {
+                        // 10-team: Slot 7 Court 3 (semifinalSlot+1, court 2)  
+                        console.log('10-team: Populating Championship Preview at slot', semifinalSlot + 2, 'court 2:', sf1.winner, 'vs', sf2Complete.winner);
+                        updateMatch(semifinalSlot + 2, 2, sf1.winner, sf2Complete.winner, 'FRIENDLY');
+                    }
+                }
+            }
+            
+            if (slot === semifinalSlot && court === 1) {
+                // Semifinal #2 complete - check if both semifinals done
+                const sf1Complete = matches.find(m => m.slot === semifinalSlot && m.court === 0 && m.winner);
+                if (sf1Complete && !advancementCompleted.has('semifinals')) {
+                    advancementCompleted.add('semifinals');
+                    const sf2 = matches.find(m => m.slot === semifinalSlot && m.court === 1);
+                    // Both semifinals done - set up Championship and 3rd place
+                    console.log('SF2 complete: Populating 3rd place and championship');
+                    
+                    // Use poolATeams/poolBTeams/poolCTeams already declared at function top
+                    const totalTeams = poolATeams.length + poolBTeams.length + poolCTeams.length;
+                    
+                    if (totalTeams === 9 || totalTeams === 8) {
+                        // COMPRESSED format (8-team and 9-team): Championship and 3rd place both at semifinalSlot+1
+                        console.log('  Championship (slot', semifinalSlot + 1, 'court 0):', sf1Complete.winner, 'vs', sf2.winner);
+                        console.log('  3rd place (slot', semifinalSlot + 1, 'court 1):', sf1Complete.loser, 'vs', sf2.loser);
+                        updateMatch(semifinalSlot + 1, 0, sf1Complete.winner, sf2.winner, 'CHAMPIONSHIP MATCH');
+                        updateMatch(semifinalSlot + 1, 1, sf1Complete.loser, sf2.loser, '3RD PLACE MATCH');
+                        // Court 2 already has 7th place match (seeded in calculatePoolRankings)
+                    } else {
+                        // Standard format: 3rd place first, then Championship
+                        console.log('  3rd place (slot', semifinalSlot + 1, 'court 0):', sf1Complete.loser, 'vs', sf2.loser);
+                        console.log('  Championship (slot', semifinalSlot + 2, 'court 0):', sf1Complete.winner, 'vs', sf2.winner);
+                        updateMatch(semifinalSlot + 1, 0, sf1Complete.loser, sf2.loser, '3RD PLACE MATCH');
+                        updateMatch(semifinalSlot + 2, 0, sf1Complete.winner, sf2.winner, 'CHAMPIONSHIP MATCH');
+                    }
+                    
+                    // Populate Championship Preview friendlies based on team count (skip for 9-team and 8-team extended)
+                    
+                    if (totalTeams === 6) {
+                        console.log('6-team: Populating Championship Preview at slot', semifinalSlot + 1, 'court 1:', sf1Complete.winner, 'vs', sf2.winner);
+                        updateMatch(semifinalSlot + 1, 1, sf1Complete.winner, sf2.winner, 'FRIENDLY');
+                    } else if (totalTeams === 7) {
+                        console.log('7-team: Populating Championship Preview at slot', semifinalSlot + 1, 'court 2:', sf1Complete.winner, 'vs', sf2.winner);
+                        updateMatch(semifinalSlot + 1, 2, sf1Complete.winner, sf2.winner, 'FRIENDLY');
+                    } else if (totalTeams === 10) {
+                        console.log('10-team: Populating Championship Preview at slot', semifinalSlot + 2, 'court 2:', sf1Complete.winner, 'vs', sf2.winner);
+                        updateMatch(semifinalSlot + 2, 2, sf1Complete.winner, sf2.winner, 'FRIENDLY');
+                    }
+                }
+            }
+            
+            // 5th Place Match (Court 2 in first playoff slot)
+            if (slot === semifinalSlot && court === 2) {
+                finalPlacements[5] = winner;
+                finalPlacements[6] = loser;
+                updateFinalStandings();
+                
+                const totalTeams = poolATeams.length + poolBTeams.length + poolCTeams.length;
+                
+                // 6-team: Populate 5th place rematch at Slot 4 Court 3 (semifinalSlot+1, court 2)
+                if (totalTeams === 6) {
+                    console.log('6-team: 5th place complete, populating rematch at slot', semifinalSlot + 1, 'court 2:', winner, 'vs', loser);
+                    updateMatch(semifinalSlot + 1, 2, winner, loser, 'FRIENDLY');
+                }
+                
+                // For 7-team tournaments, populate 7th place match (A#4 vs loser of 5th place)
+                if (totalTeams === 7) {
+                    const a4 = poolATeams.find(t => {
+                        const poolStandings = calculatePoolStandings();
+                        return poolStandings.A[t] && poolStandings.A[t].rank === 4;
+                    });
+                    if (a4) {
+                        console.log('7-team: 5th place complete, populating 7th place match:', a4, 'vs', loser);
+                        updateMatch(semifinalSlot + 1, 1, a4, loser, '7TH PLACE MATCH');
+                    }
+                }
+                
+                // For 9-team tournaments, A#5 is automatically 9th place (no match needed)
+                // See calculatePoolRankings() where finalPlacements[9] = a5 is set
+            }
+            
+            // 3rd Place Match (semifinalSlot + 1, court 0) → 3rd/4th place
+            if (slot === semifinalSlot + 1 && court === 0) {
+                finalPlacements[3] = winner;
+                finalPlacements[4] = loser;
+                updateFinalStandings();
+                
+                // Use poolATeams/poolBTeams/poolCTeams already declared at function top
+                const totalTeams = poolATeams.length + poolBTeams.length + poolCTeams.length;
+                
+                // Check if championship is complete for victory celebration
+                const champMatch = matches.find(m => m.slot === semifinalSlot + 2 && m.court === 0 && m.winner);
+                if (champMatch) {
+                    console.log('3rd place and championship complete, populating victory match (slot', semifinalSlot + 3, 'court 0):', champMatch.winner, 'vs', winner);
+                    updateMatch(semifinalSlot + 3, 0, champMatch.winner, winner, 'FRIENDLY');
+                }
+                
+                // For 8-team: Populate friendly match (3rdL vs 5thW) when 5th place is complete
+                if (totalTeams === 8) {
+                    const fifthMatch = matches.find(m => m.slot === semifinalSlot && m.court === 2 && m.winner);
+                    if (fifthMatch) {
+                        console.log('3rd place complete (8-team), populating friendly match at slot', semifinalSlot + 2, 'court 1:', loser, 'vs', fifthMatch.winner);
+                        updateMatch(semifinalSlot + 2, 1, loser, fifthMatch.winner, 'FRIENDLY');
+                    }
+                    
+                    // Also check if championship is complete for Slot 8 Court 3 friendly
+                    const champMatch = matches.find(m => m.slot === semifinalSlot + 2 && m.court === 0 && m.winner);
+                    const consolMatch = matches.find(m => m.slot === semifinalSlot + 2 && m.court === 2 && m.winner);
+                    if (champMatch && consolMatch) {
+                        console.log('8-team: 3rd place, championship and consolation complete, populating final friendly (slot', semifinalSlot + 3, 'court 2):', champMatch.loser, 'vs', consolMatch.winner);
+                        updateMatch(semifinalSlot + 3, 2, champMatch.loser, consolMatch.winner, 'FRIENDLY');
+                    }
+                }
+                
+                // For 6-team: Populate friendly matches when 3rd place and 5th place are complete
+                if (totalTeams === 6) {
+                    const fifthMatch = matches.find(m => m.slot === semifinalSlot && m.court === 2 && m.winner);
+                    if (fifthMatch) {
+                        // Slot 5 Court 2: 3rdL vs 5thW
+                        console.log('6-team: 3rd and 5th complete, populating slot', semifinalSlot + 2, 'court 1:', loser, 'vs', fifthMatch.winner);
+                        updateMatch(semifinalSlot + 2, 1, loser, fifthMatch.winner, 'FRIENDLY');
+                        // Slot 5 Court 3: 3rdW vs 5thL  
+                        console.log('6-team: Populating slot', semifinalSlot + 2, 'court 2:', winner, 'vs', fifthMatch.loser);
+                        updateMatch(semifinalSlot + 2, 2, winner, fifthMatch.loser, 'FRIENDLY');
+                    }
+                }
+                
+                // For 7-team: Populate friendly match (3rdL vs 5thW) when 5th place is complete
+                if (totalTeams === 7) {
+                    const fifthMatch = matches.find(m => m.slot === semifinalSlot && m.court === 2 && m.winner);
+                    if (fifthMatch) {
+                        console.log('7-team: 3rd and 5th complete, populating slot', semifinalSlot + 2, 'court 2:', loser, 'vs', fifthMatch.winner);
+                        updateMatch(semifinalSlot + 2, 2, loser, fifthMatch.winner, 'FRIENDLY');
+                    }
+                }
+            }
+            
+            // 7th Place Match (semifinalSlot + 1, court 1) → 7th/8th place
+            if (slot === semifinalSlot + 1 && court === 1) {
+                finalPlacements[7] = winner;
+                finalPlacements[8] = loser;
+                updateFinalStandings();
+                
+                // Use poolATeams/poolBTeams/poolCTeams already declared at function top
+                const totalTeams = poolATeams.length + poolBTeams.length + poolCTeams.length;
+                
+                // Check if 5th place is also complete to populate consolation match
+                const fifthMatch = matches.find(m => m.slot === semifinalSlot && m.court === 2 && m.winner);
+                if (fifthMatch && totalTeams >= 7) {
+                    // Consolation court varies by tournament size:
+                    // 7-team: court 1, 8-team: court 2, 9-team: court 1, 10-team: court 1
+                    const consolationCourt = totalTeams === 8 ? 2 : 1;
+                    console.log('7th place complete, 5th place also complete, populating consolation match (slot', semifinalSlot + 2, 'court', consolationCourt, '):', fifthMatch.loser, 'vs', loser);
+                    updateMatch(semifinalSlot + 2, consolationCourt, fifthMatch.loser, loser, 'CONSOLATION');
+                    
+                    // Also populate victory celebration for 7-10 team (always court 1)
+                    console.log('7th and 5th complete, populating victory match (slot', semifinalSlot + 3, 'court 1):', fifthMatch.winner, 'vs', winner);
+                    updateMatch(semifinalSlot + 3, 1, fifthMatch.winner, winner, 'FRIENDLY');
+                }
+            }
+            
+            // 9-TEAM COMPRESSED FORMAT: Championship, 3rd, and 7th place all at semifinalSlot+1
+            // Note: poolATeams, poolBTeams, poolCTeams already declared at top of function
+            const totalTeams = poolATeams.length + poolBTeams.length + poolCTeams.length;
+            
+            // 9th Place Match (semifinalSlot + 1, court 2) → 9th/10th place (ONLY for 10-team tournaments)
+            if (totalTeams === 10 && slot === semifinalSlot + 1 && court === 2) {
+                finalPlacements[9] = winner;
+                finalPlacements[10] = loser;
+                updateFinalStandings();
+            }
+            
+            if ((totalTeams === 9 || totalTeams === 8) && slot === semifinalSlot + 1) {
+                // COMPRESSED FORMAT: Championship at court 0, 3rd place at court 1, 7th place at court 2
+                if (court === 0) {
+                    // Championship complete
+                    finalPlacements[1] = winner;
+                    finalPlacements[2] = loser;
+                    updateFinalStandings();
+                } else if (court === 1) {
+                    // 3rd place complete
+                    finalPlacements[3] = winner;
+                    finalPlacements[4] = loser;
+                    updateFinalStandings();
+                } else if (court === 2) {
+                    // 7th place complete
+                    finalPlacements[7] = winner;
+                    finalPlacements[8] = loser;
+                    updateFinalStandings();
+                }
+                
+                // No extra slots for compressed format - all matches complete by Slot 8
+                // For 9-team: Rank 9 is set automatically in calculatePoolRankings()
+                
+                return; // Skip standard Championship handler for compressed formats
+            }
+            
+            // Championship Match (semifinalSlot + 2, court 0) → 1st/2nd place
+            if (slot === semifinalSlot + 2 && court === 0) {
+                finalPlacements[1] = winner;
+                finalPlacements[2] = loser;
+                updateFinalStandings();
+                
+                // Check if 3rd place is complete for victory celebration
+                const thirdMatch = matches.find(m => m.slot === semifinalSlot + 1 && m.court === 0 && m.winner);
+                if (thirdMatch) {
+                    console.log('Championship and 3rd place complete, populating victory match (slot', semifinalSlot + 3, 'court 0):', winner, 'vs', thirdMatch.winner);
+                    updateMatch(semifinalSlot + 3, 0, winner, thirdMatch.winner, 'FRIENDLY');
+                    
+                    // Populate ChampL vs ConsolW friendly for multiple team sizes
+                    // Use poolATeams/poolBTeams/poolCTeams already declared at function top
+                    const totalTeams = poolATeams.length + poolBTeams.length + poolCTeams.length;
+                    
+                    if (totalTeams === 6) {
+                        // 6-team: Slot 6 Court 2 - ChampL vs ConsolW (consolation is at slot 5 court 1)
+                        const consolMatch = matches.find(m => m.slot === semifinalSlot + 2 && m.court === 1 && m.winner);
+                        if (consolMatch) {
+                            console.log('6-team: Championship complete, populating Slot 6 Court 2:', loser, 'vs', consolMatch.winner);
+                            updateMatch(semifinalSlot + 3, 1, loser, consolMatch.winner, 'FRIENDLY');
+                        }
+                    } else if (totalTeams === 7 || totalTeams === 10) {
+                        // 7/10-team: Consolation is at semifinalSlot+2, court 1
+                        const consolMatch = matches.find(m => m.slot === semifinalSlot + 2 && m.court === 1 && m.winner);
+                        if (consolMatch) {
+                            console.log(totalTeams + '-team: Championship and consolation complete, populating final friendly:', loser, 'vs', consolMatch.winner);
+                            updateMatch(semifinalSlot + 3, 2, loser, consolMatch.winner, 'FRIENDLY');
+                        }
+                    } else if (totalTeams === 8) {
+                        // 8-team: Consolation is at semifinalSlot+2, court 2
+                        const consolMatch = matches.find(m => m.slot === semifinalSlot + 2 && m.court === 2 && m.winner);
+                        if (consolMatch) {
+                            console.log('8-team: Championship and consolation complete, populating final friendly (slot', semifinalSlot + 3, 'court 2):', loser, 'vs', consolMatch.winner);
+                            updateMatch(semifinalSlot + 3, 2, loser, consolMatch.winner, 'FRIENDLY');
+                        }
+                    }
+                }
+            }
+            
+            // Consolation Match completion handlers
+            if (slot === semifinalSlot + 2 && court === 1) {
+                // Consolation match for 6/7/9/10 teams (court 1)
+                // Use poolATeams/poolBTeams/poolCTeams already declared at function top
+                const totalTeams = poolATeams.length + poolBTeams.length + poolCTeams.length;
+                
+                if (totalTeams === 6) {
+                    const champMatch = matches.find(m => m.slot === semifinalSlot + 2 && m.court === 0 && m.winner);
+                    const fifthMatch = matches.find(m => m.slot === semifinalSlot && m.court === 2 && m.winner);
+                    if (champMatch && fifthMatch) {
+                        // Slot 6 Court 2: ChampL vs ConsolW
+                        console.log('6-team: Consolation complete, populating Slot 6 Court 2:', champMatch.loser, 'vs', winner);
+                        updateMatch(semifinalSlot + 3, 1, champMatch.loser, winner, 'FRIENDLY');
+                        // Slot 6 Court 3: 5thW vs 5thL
+                        console.log('6-team: Populating Slot 6 Court 3:', fifthMatch.winner, 'vs', fifthMatch.loser);
+                        updateMatch(semifinalSlot + 3, 2, fifthMatch.winner, fifthMatch.loser, 'FRIENDLY');
+                    }
+                } else if (totalTeams === 7 || totalTeams === 10) {
+                    const champMatch = matches.find(m => m.slot === semifinalSlot + 2 && m.court === 0 && m.winner);
+                    if (champMatch) {
+                        console.log(totalTeams + '-team: Consolation complete, populating final friendly:', champMatch.loser, 'vs', winner);
+                        updateMatch(semifinalSlot + 3, 2, champMatch.loser, winner, 'FRIENDLY');
+                    }
+                }
+            }
+            
+            if (slot === semifinalSlot + 2 && court === 2) {
+                // Consolation match for 8 teams (court 2)
+                // Use poolATeams/poolBTeams/poolCTeams already declared at function top
+                const totalTeams = poolATeams.length + poolBTeams.length + poolCTeams.length;
+                
+                if (totalTeams === 8) {
+                    const champMatch = matches.find(m => m.slot === semifinalSlot + 2 && m.court === 0 && m.winner);
+                    if (champMatch) {
+                        console.log('8-team: Consolation complete, championship also complete, populating final friendly (slot', semifinalSlot + 3, 'court 2):', champMatch.loser, 'vs', winner);
+                        updateMatch(semifinalSlot + 3, 2, champMatch.loser, winner, 'FRIENDLY');
+                    }
+                }
+            }
+            
+            // All other matches are friendlies - don't affect standings
+        }
+        
+        function updateMatch(slot, court, team1Id, team2Id, matchLabel) {
+            const elem = document.getElementById(`slot${slot}court${court}`);
+            console.log('updateMatch called:', {slot, court, team1Id, team2Id, matchLabel, elementFound: !!elem});
+            if (elem && team1Id && team2Id) {
+                elem.innerHTML = generateMatch(slot, court, team1Id, team2Id, matchLabel);
+                console.log('Match updated successfully');
+            } else {
+                console.warn('updateMatch failed - missing:', {elem: !!elem, team1Id: !!team1Id, team2Id: !!team2Id});
+            }
+        }
+        
+        function updateFinalStandings() {
+            const standingsDiv = document.getElementById('final-standings');
+            let html = '';
+            
+            // Determine how many teams to display based on actual team count
+            const actualTeamCount = Object.keys(teams).length;
+            const maxPosition = Math.min(actualTeamCount, 10);
+            
+            for (let i = 1; i <= maxPosition; i++) {
+                const teamId = finalPlacements[i];
+                const className = i === 1 ? 'first' : i === 2 ? 'second' : i === 3 ? 'third' : '';
+                const medal = i === 1 ? '🥇' : i === 2 ? '🥈' : i === 3 ? '🥉' : i === 5 ? '🏅' : i === 7 ? '🎖️' : i === 9 ? '🏷️' : '';
+                const teamInfo = teamId ? teams[teamId] : null;
+                
+                // Show placement text with appropriate suffix
+                const suffix = i === 1 ? 'st' : i === 2 ? 'nd' : i === 3 ? 'rd' : 'th';
+                
+                html += `
+                    <div class="place-card ${className}">
+                        <div class="place-number">${medal} ${i}${suffix} Place</div>
+                        <div class="place-team">${teamInfo ? teamInfo.name : '---'}</div>
+                        ${teamInfo ? `<div style="font-size: 11px; color: #999;">${teamInfo.p1}<br>${teamInfo.p2}</div>` : ''}
+                    </div>
+                `;
+            }
+            
+            standingsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
