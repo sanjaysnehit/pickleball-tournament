@@ -2539,7 +2539,10 @@
             }
             
             // 3rd Place Match (semifinalSlot + 1, court 0) → 3rd/4th place
-            if (slot === semifinalSlot + 1 && court === 0) {
+            // NOTE: Skipped for compressed 8-team / 3-pool 9-team format — court 0 is the Championship there
+            if (slot === semifinalSlot + 1 && court === 0 &&
+                    (poolATeams.length + poolBTeams.length + poolCTeams.length) !== 8 &&
+                    !((poolATeams.length + poolBTeams.length + poolCTeams.length) === 9 && poolCTeams.length === 3)) {
                 finalPlacements[3] = winner;
                 finalPlacements[4] = loser;
                 updateFinalStandings();
@@ -2595,7 +2598,10 @@
             }
             
             // 7th Place Match (semifinalSlot + 1, court 1) → 7th/8th place
-            if (slot === semifinalSlot + 1 && court === 1) {
+            // NOTE: Skipped for compressed 8-team / 3-pool 9-team format — court 1 is the 3rd Place Match there
+            if (slot === semifinalSlot + 1 && court === 1 &&
+                    (poolATeams.length + poolBTeams.length + poolCTeams.length) !== 8 &&
+                    !((poolATeams.length + poolBTeams.length + poolCTeams.length) === 9 && poolCTeams.length === 3)) {
                 finalPlacements[7] = winner;
                 finalPlacements[8] = loser;
                 updateFinalStandings();
@@ -2760,7 +2766,7 @@
             for (let i = 1; i <= maxPosition; i++) {
                 const teamId = finalPlacements[i];
                 const className = i === 1 ? 'first' : i === 2 ? 'second' : i === 3 ? 'third' : '';
-                const medal = i === 1 ? '🥇' : i === 2 ? '🥈' : i === 3 ? '🥉' : i === 5 ? '🏅' : i === 7 ? '🎖️' : i === 9 ? '🏷️' : '';
+                const medal = i === 1 ? '🥇' : i === 2 ? '🥈' : i === 3 ? '🥉' : '';
                 const teamInfo = teamId ? teams[teamId] : null;
                 
                 // Show placement text with appropriate suffix
