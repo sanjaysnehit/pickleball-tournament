@@ -734,6 +734,9 @@
         let tournamentStarted = false;
         let numPlayers = 0;
         let numTeams = 0;
+        let tournamentFormat18 = 'cross-pool'; // 'cross-pool' | 'bracket' (only used for 9-team tournaments)
+        let bracketTeams = {};     // { court: [teamId, teamId, teamId] } populated after bracket format pool play
+        let bracketStandings = {}; // { court: { teamId: { wins, points } } }
         
         // Initialize player selection on page load
         window.onload = function() {
@@ -818,10 +821,38 @@
                 let formatHtml = `<p><strong>👥 Players:</strong> ${count}</p>`;
                 formatHtml += `<p><strong>🏆 Teams:</strong> ${numTeams} doubles teams</p>`;
                 formatHtml += `<p><strong>🏟️ Courts:</strong> 3 courts</p>`;
-                formatHtml += `<p><strong>⏱️ Duration:</strong> FULL 2 hours (8 time slots × 15 minutes)</p>`;
-                formatHtml += `<p><strong>📊 Format:</strong> Pool play + Playoffs + Placement brackets</p>`;
-                formatHtml += `<p style="color: #27ae60;">✓ All courts utilized across 8 time slots (2 hours)</p>`;
-                
+
+                if (count === 18) {
+                    // Preserve existing radio selection on re-render; only default on first visit
+                    const existingRadio = document.querySelector('input[name="format18"]:checked');
+                    if (!existingRadio) tournamentFormat18 = 'cross-pool';
+                    formatHtml += `<p><strong>⏱️ Duration:</strong> FULL 2 hours</p>`;
+                    formatHtml += `
+                        <hr style="margin: 12px 0; border-color: #ddd;">
+                        <p style="font-weight: bold; color: #667eea; margin-bottom: 8px;">🎯 Choose Tournament Format:</p>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <label style="padding: 12px; background: white; border: 2px solid #667eea; border-radius: 8px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px;">
+                                <input type="radio" name="format18" value="cross-pool" ${tournamentFormat18 !== 'bracket' ? 'checked' : ''} onclick="tournamentFormat18='cross-pool'" style="width:16px;height:16px;margin-top:3px;flex-shrink:0;">
+                                <div>
+                                    <strong>Current Format (Cross-Pool)</strong><br>
+                                    <small style="color:#555;">15-min games &middot; 6 rounds (intra + cross-pool) &middot; fair cross-pool seeding &middot; elimination playoffs &middot; 4&ndash;6 matches/team</small>
+                                </div>
+                            </label>
+                            <label style="padding: 12px; background: white; border: 2px solid #43e97b; border-radius: 8px; cursor: pointer; display: flex; align-items: flex-start; gap: 10px;">
+                                <input type="radio" name="format18" value="bracket" ${tournamentFormat18 === 'bracket' ? 'checked' : ''} onclick="tournamentFormat18='bracket'" style="width:16px;height:16px;margin-top:3px;flex-shrink:0;">
+                                <div>
+                                    <strong>Bracket Format ✨ (New)</strong><br>
+                                    <small style="color:#555;">13-min games &middot; play every pool opponent twice &middot; 3-bracket round-robin playoffs (Winners / Nice Try / Losers) &middot; exactly 6 matches &amp; 3 sits for everyone</small>
+                                </div>
+                            </label>
+                        </div>
+                    `;
+                } else {
+                    formatHtml += `<p><strong>⏱️ Duration:</strong> FULL 2 hours (8 time slots × 15 minutes)</p>`;
+                    formatHtml += `<p><strong>📊 Format:</strong> Pool play + Playoffs + Placement brackets</p>`;
+                    formatHtml += `<p style="color: #27ae60;">✓ All courts utilized across 8 time slots (2 hours)</p>`;
+                }
+
                 document.getElementById('format-details').innerHTML = formatHtml;
                 if (info) info.style.display = 'block';
                 
@@ -1205,8 +1236,58 @@
             
             // Remove from matches array
             matches = matches.filter(m => !(m.slot === slot && m.court === court));
-            
-            // Clear downstream matches that depend on this result
+
+            // Bracket format playoff edit: just recalc standings for this court and exit.
+            // Must be BEFORE the knockout cascade below — bracket slots map onto the same
+            // slot numbers as semifinalSlot/thirdPlaceSlot/championshipSlot and would
+            // incorrectly wipe other bracket playoff matches otherwise.
+            if (tournamentFormat18 === 'bracket' && slot > poolPlaySlots) {
+                recalcBracketStandingsForCourt(court);
+                const offset = court * 3;
+                finalPlacements[offset + 1] = null;
+                finalPlacements[offset + 2] = null;
+                finalPlacements[offset + 3] = null;
+                updateFinalStandings();
+                alert('Score reset! You can now enter the correct score.');
+                return;
+            }
+
+            // Compressed playoff format (8-team and 9-team cross-pool):
+            // All finals are at semifinalSlot+1 (court0=championship, court1=3rd, court2=7th).
+            // The standard cascade below uses thirdPlaceSlot/championshipSlot which map
+            // incorrectly for these formats — handle them here and return early.
+            const totalTeamsEdit = poolATeams.length + poolBTeams.length + poolCTeams.length;
+            const isCompressed = (totalTeamsEdit === 9 || totalTeamsEdit === 8) && tournamentFormat18 !== 'bracket';
+            if (isCompressed && slot === thirdPlaceSlot) {
+                // thirdPlaceSlot = semifinalSlot + 1 = 8
+                // court 0 = championship → clear 1st/2nd
+                // court 1 = 3rd place   → clear 3rd/4th
+                // court 2 = 7th place   → clear 7th/8th
+                if (court === 0) {
+                    finalPlacements[1] = null; finalPlacements[2] = null;
+                } else if (court === 1) {
+                    finalPlacements[3] = null; finalPlacements[4] = null;
+                } else if (court === 2) {
+                    finalPlacements[7] = null; finalPlacements[8] = null;
+                }
+                updateFinalStandings();
+                alert('Score reset! You can now enter the correct score.');
+                return;
+            }
+            if (isCompressed && slot === semifinalSlot && court <= 1) {
+                // Editing a semi in compressed format also invalidates championship/3rd results
+                finalPlacements[1] = null; finalPlacements[2] = null;
+                finalPlacements[3] = null; finalPlacements[4] = null;
+                updateFinalStandings();
+                updateMatch(thirdPlaceSlot, 0, null, null); // clear championship box
+                updateMatch(thirdPlaceSlot, 1, null, null); // clear 3rd place box
+                matches = matches.filter(m => m.slot < thirdPlaceSlot);
+                advancementCompleted.delete('semifinals');
+                alert('Score reset! You can now enter the correct score.');
+                return;
+            }
+
+            // Clear downstream matches that depend on this result (standard knockout format)
             if (slot === semifinalSlot && court <= 1) {
                 // Semifinals edited - clear Championship, 3rd place, warmup, and all downstream matches
                 console.log('Semifinal edited - clearing 3rd place, warmup, championship, consolations, and victory matches');
@@ -1268,7 +1349,7 @@
                 console.log('Consolation match edited - clearing victory celebration matches');
                 updateMatch(championshipSlot + 1, court === 1 ? 0 : 1, null, null);
             }
-            
+
             alert('Score reset! You can now enter the correct score.');
         }
         
@@ -1286,6 +1367,8 @@
             
             advancementCompleted.clear(); // Reset advancement tracking
             poolPlayEnded = false; // Reset pool play flag
+            bracketTeams = {};     // Reset bracket playoff state
+            bracketStandings = {};
             
             const teamsPerPool =Math.ceil(numTeams / 2);
             const poolACount = Math.min(teamsPerPool, numTeams);
@@ -1373,7 +1456,26 @@
             
             // Special case: 9 teams with 3 pools of 3
             if (actualTeamCount === 9 && poolCTeams.length === 3) {
-                // Round-robin within each pool (3 matches per pool = 9 total)
+
+                // NEW: Bracket round-robin format (play pool twice, 13 min slots, bracket playoffs)
+                if (tournamentFormat18 === 'bracket') {
+                    const poolAMatches = generateRoundRobin(poolATeams); // 3 unique intra-pool matches
+                    const poolBMatches = generateRoundRobin(poolBTeams);
+                    const poolCMatches = generateRoundRobin(poolCTeams);
+                    const poolPlaySchedule = distributeThreePoolMatchesDouble(poolAMatches, poolBMatches, poolCMatches);
+                    let html = '<div class="round-section"><div class="round-header">🎾 POOL PLAY — DOUBLE ROUND ROBIN (7:00–8:18)</div>';
+                    poolPlaySchedule.forEach((slot, idx) => {
+                        const slotNumber = idx + 1;
+                        html += generateTimeSlot(slotNumber, formatTimeSlot13(slotNumber), slot);
+                    });
+                    html += '</div>';
+                    html += '<div class="flow-info"><strong>📊 Bracket Format:</strong> 6 rounds of pool play (play every pool opponent twice, 13 min/game) → 3 rounds of bracket playoffs (Winners / Nice Try / Losers). Every team plays exactly 6 games and sits 3 rounds.</div>';
+                    html += generateThreePoolBracketPlayoffStructure(poolPlaySchedule.length);
+                    content.innerHTML = html;
+                    return;
+                }
+
+                // EXISTING (cross-pool): Round-robin within each pool (3 matches per pool = 9 total)
                 const poolAMatches = generateRoundRobin(poolATeams); // 3 matches
                 const poolBMatches = generateRoundRobin(poolBTeams); // 3 matches
                 const poolCMatches = generateRoundRobin(poolCTeams); // 3 matches
@@ -1692,7 +1794,116 @@
             
             return `${startHour}:${String(startMin).padStart(2, '0')}-${endHour}:${String(endMin).padStart(2, '0')}`;
         }
-        
+
+        // 13-minute time slots for bracket format (9-team / 18-player)
+        // Rounds 1-6: pool play every 13 min starting 7:00 (ends 8:18)
+        // Rounds 7-9: playoffs start at 8:20 (2-min break), then every 13 min
+        function formatTimeSlot13(slotNumber) {
+            let startMinutes, endMinutes;
+            if (slotNumber <= 6) {
+                startMinutes = (slotNumber - 1) * 13;
+                endMinutes = slotNumber * 13;
+            } else {
+                // Add 2-minute break after slot 6 ends at 8:18 → slot 7 starts at 8:20
+                startMinutes = (slotNumber - 1) * 13 + 2;
+                endMinutes = slotNumber * 13 + 2;
+            }
+            const startHour = 7 + Math.floor(startMinutes / 60);
+            const startMin = startMinutes % 60;
+            const endHour = 7 + Math.floor(endMinutes / 60);
+            const endMin = endMinutes % 60;
+            return `${startHour}:${String(startMin).padStart(2, '0')}-${endHour}:${String(endMin).padStart(2, '0')}`;
+        }
+
+        // Double intra-pool round-robin: rounds 1-3 first pass, rounds 4-6 rematches
+        function distributeThreePoolMatchesDouble(poolAMatches, poolBMatches, poolCMatches) {
+            const rm = (m) => [null, null, m[0], m[1], 'REMATCH'];
+            return [
+                [poolAMatches[0], poolBMatches[0], poolCMatches[0]],
+                [poolAMatches[1], poolBMatches[1], poolCMatches[1]],
+                [poolAMatches[2], poolBMatches[2], poolCMatches[2]],
+                [rm(poolAMatches[0]), rm(poolBMatches[0]), rm(poolCMatches[0])],
+                [rm(poolAMatches[1]), rm(poolBMatches[1]), rm(poolCMatches[1])],
+                [rm(poolAMatches[2]), rm(poolBMatches[2]), rm(poolCMatches[2])]
+            ];
+        }
+
+        // Generate 3 playoff slots (slots 7-9) for bracket round-robin format
+        // Teams are placeholders until calculatePoolRankingsForBrackets() seeds them
+        function generateThreePoolBracketPlayoffStructure(poolPlaySlots) {
+            const s7 = poolPlaySlots + 1, s8 = poolPlaySlots + 2, s9 = poolPlaySlots + 3;
+            return `
+                <div class="round-section">
+                    <div class="round-header">🏆 BRACKET PLAYOFFS — ROUND ROBIN (8:20 AM)</div>
+                    ${generateTimeSlot(s7, formatTimeSlot13(s7) + ' — PLAYOFFS ROUND 1', [[null,null,'WB-P1','WB-P2','WINNERS BRACKET'],[null,null,'NTB-P1','NTB-P2','NICE TRY BRACKET'],[null,null,'LB-P1','LB-P2','LOSERS BRACKET']])}
+                    ${generateTimeSlot(s8, formatTimeSlot13(s8) + ' — PLAYOFFS ROUND 2', [[null,null,'WB-P2','WB-P3','WINNERS BRACKET'],[null,null,'NTB-P2','NTB-P3','NICE TRY BRACKET'],[null,null,'LB-P2','LB-P3','LOSERS BRACKET']])}
+                    ${generateTimeSlot(s9, formatTimeSlot13(s9) + ' — PLAYOFFS ROUND 3', [[null,null,'WB-P1','WB-P3','WINNERS BRACKET'],[null,null,'NTB-P1','NTB-P3','NICE TRY BRACKET'],[null,null,'LB-P1','LB-P3','LOSERS BRACKET']])}
+                </div>
+            `;
+        }
+
+        // Seed bracket playoffs after pool play completes (bracket format)
+        function calculatePoolRankingsForBrackets() {
+            // Rank teams within each pool
+            ['A', 'B', 'C'].forEach(pool => {
+                const sorted = Object.entries(poolStandings[pool])
+                    .sort((a, b) => b[1].wins !== a[1].wins ? b[1].wins - a[1].wins : b[1].points - a[1].points);
+                sorted.forEach((entry, idx) => { poolStandings[pool][entry[0]].rank = idx + 1; });
+            });
+
+            const getRanked = (pool, rank) => Object.keys(poolStandings[pool]).find(t => poolStandings[pool][t].rank === rank);
+            const winners = [getRanked('A', 1), getRanked('B', 1), getRanked('C', 1)];
+            const niceTry = [getRanked('A', 2), getRanked('B', 2), getRanked('C', 2)];
+            const losers  = [getRanked('A', 3), getRanked('B', 3), getRanked('C', 3)];
+
+            bracketTeams = { 0: winners, 1: niceTry, 2: losers };
+            bracketStandings = {};
+            [0, 1, 2].forEach(court => {
+                bracketStandings[court] = {};
+                bracketTeams[court].forEach(id => { if (id) bracketStandings[court][id] = { wins: 0, points: 0 }; });
+            });
+
+            showPoolCompleteScreen();
+
+            // Populate all 9 playoff slots (3 courts × 3 rounds round-robin)
+            const s7 = 7, s8 = 8, s9 = 9;
+            updateMatch(s7, 0, winners[0], winners[1], 'WINNERS BRACKET');
+            updateMatch(s7, 1, niceTry[0], niceTry[1], 'NICE TRY BRACKET');
+            updateMatch(s7, 2, losers[0],  losers[1],  'LOSERS BRACKET');
+            updateMatch(s8, 0, winners[1], winners[2], 'WINNERS BRACKET');
+            updateMatch(s8, 1, niceTry[1], niceTry[2], 'NICE TRY BRACKET');
+            updateMatch(s8, 2, losers[1],  losers[2],  'LOSERS BRACKET');
+            updateMatch(s9, 0, winners[0], winners[2], 'WINNERS BRACKET');
+            updateMatch(s9, 1, niceTry[0], niceTry[2], 'NICE TRY BRACKET');
+            updateMatch(s9, 2, losers[0],  losers[2],  'LOSERS BRACKET');
+        }
+
+        // After all 3 rounds of a bracket court are done, calculate placements
+        function computeBracketPlacements(court) {
+            const sorted = Object.entries(bracketStandings[court])
+                .sort((a, b) => b[1].wins !== a[1].wins ? b[1].wins - a[1].wins : b[1].points - a[1].points);
+            const offset = court * 3; // court 0 → 1st-3rd, court 1 → 4th-6th, court 2 → 7th-9th
+            finalPlacements[offset + 1] = sorted[0] ? sorted[0][0] : null;
+            finalPlacements[offset + 2] = sorted[1] ? sorted[1][0] : null;
+            finalPlacements[offset + 3] = sorted[2] ? sorted[2][0] : null;
+            updateFinalStandings();
+        }
+
+        // Recalculate bracket standings for a court from the matches array (used after score edit)
+        function recalcBracketStandingsForCourt(court) {
+            bracketStandings[court] = {};
+            (bracketTeams[court] || []).forEach(id => { if (id) bracketStandings[court][id] = { wins: 0, points: 0 }; });
+            [7, 8, 9].forEach(s => {
+                const m = matches.find(match => match.slot === s && match.court === court);
+                if (m && m.winner) {
+                    const pts = m.score1 > m.score2 ? m.score1 : m.score2;
+                    if (!bracketStandings[court][m.winner]) bracketStandings[court][m.winner] = { wins: 0, points: 0 };
+                    bracketStandings[court][m.winner].wins++;
+                    bracketStandings[court][m.winner].points += pts;
+                }
+            });
+        }
+
         function generatePlayoffStructure(poolASize, poolBSize, poolPlaySlots) {
             const startSlot = poolPlaySlots + 1;
             const totalSlots = 8; // Always use 8 slots (2 hours)
@@ -1883,7 +2094,11 @@
                     'CHALLENGE MATCH': { emoji: '⚔️', style: 'background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
                     'WARMUP': { emoji: '⚡', style: 'background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);' },
                     'CONSOLATION': { emoji: '🤝', style: 'background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); color: white; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);' },
-                    'REVENGE MATCH': { emoji: '⚔️', style: 'background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #2d3436; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 2px solid #fdcb6e;' }
+                    'REVENGE MATCH': { emoji: '⚔️', style: 'background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #2d3436; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 2px solid #fdcb6e;' },
+                    'REMATCH': { emoji: '🔄', style: 'background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #2d3436; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 2px solid #e17055;' },
+                    'WINNERS BRACKET': { emoji: '🏆', style: 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);' },
+                    'NICE TRY BRACKET': { emoji: '🎯', style: 'background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);' },
+                    'LOSERS BRACKET': { emoji: '💪', style: 'background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);' }
                 };
                 const config = labelConfig[matchLabel] || { emoji: '🏆', style: 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 13px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);' };
                 specialLabel = `<div style="${config.style}">${config.emoji} ${matchLabel} ${config.emoji}</div>`;
@@ -2060,6 +2275,12 @@
         }
         
         function calculatePoolRankings() {
+            // Bracket round-robin format uses its own seeding logic
+            if (tournamentFormat18 === 'bracket') {
+                calculatePoolRankingsForBrackets();
+                return;
+            }
+
             // Check if this is a 3-pool tournament
             const has3Pools = poolStandings.C && Object.keys(poolStandings.C).length > 0;
             
@@ -2418,7 +2639,23 @@
             }
             const poolPlaySlots = Math.ceil(totalPoolMatches / 3);
             const semifinalSlot = poolPlaySlots + 1;
-            
+
+            // Bracket round-robin playoff handler (bracket format for 18 players)
+            // Slots 7-9 are round-robin within each bracket court — no knockout advancement needed
+            if (tournamentFormat18 === 'bracket' && slot > poolPlaySlots) {
+                const lastMatch = matches[matches.length - 1];
+                const winnerPts = lastMatch.score1 > lastMatch.score2 ? lastMatch.score1 : lastMatch.score2;
+                if (!bracketStandings[court]) bracketStandings[court] = {};
+                if (!bracketStandings[court][winner]) bracketStandings[court][winner] = { wins: 0, points: 0 };
+                bracketStandings[court][winner].wins++;
+                bracketStandings[court][winner].points += winnerPts;
+                // When all 3 rounds for this bracket court are done, compute final placements
+                const allDone = [poolPlaySlots + 1, poolPlaySlots + 2, poolPlaySlots + 3]
+                    .every(s => matches.find(m => m.slot === s && m.court === court && m.winner));
+                if (allDone) computeBracketPlacements(court);
+                return; // No further knockout logic needed
+            }
+
             // Semifinals (Courts 0-1) → advance to Championship & 3rd Place
             // 5th Place Match (Court 2) → 5th/6th place
             if (slot === semifinalSlot && court === 0) {
